@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">BluetoothFileTransfer</string>
+    <string name="client">Client</string>
+    <string name="server">Server</string>
 </resources>
