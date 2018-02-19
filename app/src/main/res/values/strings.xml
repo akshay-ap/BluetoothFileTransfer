@@ -2,4 +2,16 @@
     <string name="app_name">BluetoothFileTransfer</string>
     <string name="client">Client</string>
     <string name="server">Server</string>
+    <string name="bluetooth_not_supported">Bluetooth not supported</string>
+    <string name="bluetooth_supported">Bluetooth available</string>
+    <string name="bluetooth_state">Bluetooth state</string>
+    <string name="unknown">unknown</string>
+    <string name="on">on</string>
+    <string name="off">off</string>
+    <string name="OFF">OFF</string>
+    <string name="ON">ON</string>
+    <string name="STATE_TURNING_OFF">STATE_TURNING_OFF</string>
+    <string name="STATE_TURNING_ON">STATE_TURNING_ON</string>
+    <string name="STATE_OFF">STATE_OFF</string>
+    <string name="STATE_ON">STATE_ON</string>
 </resources>
