@@ -4,6 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.examples.akshay.bluetoothfiletransfer.Server">
+    tools:context="com.examples.akshay.bluetoothfiletransfer.Client">
 
 </android.support.constraint.ConstraintLayout>

@@ -21,8 +21,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".Client" />
         <activity android:name=".Server" />
+        <activity android:name=".Client" />
         <activity android:name=".DataTransfer"></activity>
     </application>
 

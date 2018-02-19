@@ -1,5 +1,6 @@
 package com.examples.akshay.bluetoothfiletransfer;
 
+import android.bluetooth.BluetoothDevice;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -28,9 +29,9 @@ public class BluetoothDeviceAdapter extends RecyclerView.Adapter<BluetoothDevice
     private static final String TAG = "===BluetoothDA";
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-
         private static final String TAG = "===ViewHolder";
         public TextView name;
+        public int id;
         public ViewHolder(View itemView) {
             super(itemView);
             Log.d(ViewHolder.TAG,"ViewHolder()");
@@ -39,10 +40,12 @@ public class BluetoothDeviceAdapter extends RecyclerView.Adapter<BluetoothDevice
         }
 
 
+
         @Override
         public void onClick(View view) {
-            Log.d(ViewHolder.TAG,"ViewHolder()...click");
-
+            Log.d(ViewHolder.TAG,"ViewHolder()...click" + getAdapterPosition());
+            CustomBluetoothDevice x= arrayListCustomBluetoothDevice.get(getAdapterPosition());
+            Client.setBluetoothDeviceSelected(x.getBluetoothDevice());
         }
     }
 
@@ -63,16 +66,11 @@ public class BluetoothDeviceAdapter extends RecyclerView.Adapter<BluetoothDevice
         Log.d(BluetoothDeviceAdapter.TAG,"onBindViewHolder()");
         CustomBluetoothDevice customBluetoothDevice = arrayListCustomBluetoothDevice.get(position);
         holder.name.setText(customBluetoothDevice.getName());
-
     }
 
     @Override
     public int getItemCount() {
-
         ///Log.d(BluetoothDeviceAdapter.TAG,"getItemCount() : " + arrayListCustomBluetoothDevice.size());
         return arrayListCustomBluetoothDevice.size();
     }
-
-
-
 }

@@ -11,11 +11,11 @@
         android:id="@+id/main_activity_button_client"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/client" />
+        android:text="@string/server" />
 
     <Button
         android:id="@+id/main_activity_button_server"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/server" />
+        android:text="@string/client" />
 </LinearLayout>

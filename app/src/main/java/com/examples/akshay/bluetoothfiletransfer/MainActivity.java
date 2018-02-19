@@ -57,10 +57,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View view) {
     switch (view.getId()) {
         case R.id.main_activity_button_client:
-            startActivity(new Intent(this,Client.class));
+            startActivity(new Intent(this,Server.class));
             break;
         case R.id.main_activity_button_server:
-            startActivity(new Intent(this,Server.class));
+            startActivity(new Intent(this,Client.class));
             break;
         default:
             break;
