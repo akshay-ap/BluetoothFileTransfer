@@ -3,13 +3,12 @@ package com.examples.akshay.bluetoothfiletransfer;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
+import android.provider.ContactsContract;
 import android.util.Log;
 
-import java.io.Console;
 import java.io.IOException;
 import java.util.UUID;
 
-import static android.content.ContentValues.TAG;
 
 /**
  * Created by ash on 20/2/18.
@@ -59,6 +58,8 @@ public class ConnectThread extends Thread {
         // The connection attempt succeeded. Perform work associated with
         // the connection in a separate thread.
         //manageMyConnectedSocket(mmSocket);
+        //DataTransferService dataTransferService = new DataTransferService(mmSocket);
+        //startService()
     }
 
     // Closes the client socket and causes the thread to finish.
