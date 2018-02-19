@@ -11,10 +11,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -29,8 +26,6 @@ public class Server extends AppCompatActivity implements View.OnClickListener{
     Button buttonViewPairedDevices;
     RecyclerView recyclerViewPairedDevices;
     BluetoothDeviceAdapter bluetoothDeviceAdapter;
-    ListView listViewPairedDevices;
-    ArrayAdapter<BluetoothDevice> bluetoothDeviceArrayAdapter;
     BluetoothAdapter mBluetoothAdapter;
 
     private boolean isBluetoothOn;
@@ -74,15 +69,7 @@ public class Server extends AppCompatActivity implements View.OnClickListener{
 
 
         textViewBluetoothState = findViewById(R.id.activity_server_textview_bluetooth_state);
-        listViewPairedDevices = findViewById(R.id.activity_server_list_view_paired_devices);
         recyclerViewPairedDevices = findViewById(R.id.activity_server_recycler_view_paired_devices);
-
-        listViewPairedDevices.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-
-            }
-        });
 
     }
 
