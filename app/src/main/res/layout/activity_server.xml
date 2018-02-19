@@ -17,4 +17,23 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/unknown"/>
+
+    <Button
+        android:id="@+id/activity_server_button_view_paired_devices"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/paired_devices"/>
+
+    <ListView
+        android:id="@+id/activity_server_list_view_paired_devices"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/activity_server_recycler_view_paired_devices"
+        android:scrollbars="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
 </LinearLayout>

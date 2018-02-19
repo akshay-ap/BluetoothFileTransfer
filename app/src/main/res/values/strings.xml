@@ -14,4 +14,6 @@
     <string name="STATE_TURNING_ON">STATE_TURNING_ON</string>
     <string name="STATE_OFF">STATE_OFF</string>
     <string name="STATE_ON">STATE_ON</string>
+    <string name="SCAN">SCAN</string>
+    <string name="paired_devices">Paired Devices</string>
 </resources>
