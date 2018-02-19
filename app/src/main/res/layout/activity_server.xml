@@ -29,4 +29,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/accept"/>
+
+    <Button
+        android:id="@+id/activity_server_transfer_data"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/transfer_data"/>
 </LinearLayout>

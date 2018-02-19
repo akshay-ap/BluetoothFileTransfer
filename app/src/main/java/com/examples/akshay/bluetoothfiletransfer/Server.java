@@ -17,6 +17,7 @@ public class Server extends AppCompatActivity implements View.OnClickListener{
     TextView textViewBluetoothState;
     Button buttonMakeDiscoverable;
     Button buttonAccpet;
+    Button buttonDataTransfer;
     BluetoothAdapter mBluetoothAdapter;
     private boolean isBluetoothOn;
     @Override
@@ -62,6 +63,9 @@ public class Server extends AppCompatActivity implements View.OnClickListener{
         buttonAccpet = findViewById(R.id.activity_server_accept_connections);
         buttonAccpet.setOnClickListener(this);
 
+        buttonDataTransfer = findViewById(R.id.activity_server_transfer_data);
+        buttonDataTransfer.setOnClickListener(this);
+
     }
 
     @Override
@@ -78,6 +82,12 @@ public class Server extends AppCompatActivity implements View.OnClickListener{
                 AcceptThread acceptThread = new AcceptThread(mBluetoothAdapter);
                 acceptThread.run();
                 break;
+            case R.id.activity_server_transfer_data:
+                Log.d(Server.TAG," click transfer data");
+                Intent intent = new Intent(this,DataTransfer.class);
+                startActivity(intent);
+                break;
+
             default:
                 break;
         }

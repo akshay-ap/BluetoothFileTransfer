@@ -37,6 +37,7 @@ public class Client extends AppCompatActivity implements View.OnClickListener{
     Button buttonStartScanDevices;
     Button buttonStopScanDevices;
     Button buttonConnect;
+    Button buttonTransferData;
     RecyclerView recyclerViewPairedDevices;
     RecyclerView recyclerViewScannedDevices;
     BluetoothDeviceAdapter  bluetoothDeviceAdapterPairedDevices;
@@ -129,6 +130,9 @@ public class Client extends AppCompatActivity implements View.OnClickListener{
         buttonConnect = findViewById(R.id.activity_client_button_connect);
         buttonConnect.setOnClickListener(this);
 
+        buttonTransferData = findViewById(R.id.activity_client_transfer_data);
+        buttonTransferData.setOnClickListener(this);
+
         RecyclerView.LayoutManager layoutManagerPairedDevices = new LinearLayoutManager(getApplicationContext());
         RecyclerView.LayoutManager layoutManagerScannedDevices = new LinearLayoutManager(getApplicationContext());
 
@@ -181,6 +185,12 @@ public class Client extends AppCompatActivity implements View.OnClickListener{
                 }
                  ConnectThread connectThread = new ConnectThread(bluetoothDeviceSelected,mBluetoothAdapter);
                 connectThread.run();
+                break;
+
+            case R.id.activity_client_transfer_data:
+                Log.d(Client.TAG," click transfer data");
+                Intent intent = new Intent(this,DataTransfer.class);
+                startActivity(intent);
                 break;
             default:
                 break;

@@ -20,4 +20,7 @@
     <string name="stop_scan">STOP SCAN</string>
     <string name="connect">CONNECT</string>
     <string name="accept">ACCEPT</string>
+    <string name="data_received">Data Received</string>
+    <string name="transfer_data">TRANSFER DATA</string>
+    <string name="send">SEND</string>
 </resources>
