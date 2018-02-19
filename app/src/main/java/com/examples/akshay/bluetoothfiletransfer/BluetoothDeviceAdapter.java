@@ -16,6 +16,14 @@ import java.util.ArrayList;
 
 public class BluetoothDeviceAdapter extends RecyclerView.Adapter<BluetoothDeviceAdapter.ViewHolder> {
 
+    public ArrayList<CustomBluetoothDevice> getArrayListCustomBluetoothDevice() {
+        return arrayListCustomBluetoothDevice;
+    }
+
+    public void setArrayListCustomBluetoothDevice(ArrayList<CustomBluetoothDevice> arrayListCustomBluetoothDevice) {
+        this.arrayListCustomBluetoothDevice = arrayListCustomBluetoothDevice;
+    }
+
     ArrayList<CustomBluetoothDevice> arrayListCustomBluetoothDevice;
     private static final String TAG = "===BluetoothDA";
 

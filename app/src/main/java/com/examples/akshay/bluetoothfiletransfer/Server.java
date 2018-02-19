@@ -3,7 +3,10 @@ package com.examples.akshay.bluetoothfiletransfer;
 import android.bluetooth.BluetoothAdapter;
 ;
 import android.bluetooth.BluetoothDevice;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -24,9 +27,21 @@ public class Server extends AppCompatActivity implements View.OnClickListener{
     private static final String TAG = "===Server";
     TextView textViewBluetoothState;
     Button buttonViewPairedDevices;
+    Button buttonStartScanDevices;
+    Button buttonStopScanDevices;
+
     RecyclerView recyclerViewPairedDevices;
-    BluetoothDeviceAdapter bluetoothDeviceAdapter;
+    RecyclerView recyclerViewScannedDevices;
+    BluetoothDeviceAdapter  bluetoothDeviceAdapterPairedDevices;
+    BluetoothDeviceAdapter bluetoothDeviceAdapterScanneddDevices;
+
+    ArrayList<CustomBluetoothDevice> arrayListPairedDevices;
+    ArrayList<CustomBluetoothDevice> arrayListScannedDevices = new ArrayList<>();
+
     BluetoothAdapter mBluetoothAdapter;
+
+    IntentFilter filter;
+    private BroadcastReceiver mReceiver;
 
     private boolean isBluetoothOn;
     @Override
@@ -34,12 +49,36 @@ public class Server extends AppCompatActivity implements View.OnClickListener{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_server);
         setupUI();
+
+        arrayListPairedDevices = new ArrayList<>();
+        arrayListScannedDevices = new ArrayList<>();
+
+        bluetoothDeviceAdapterPairedDevices = new BluetoothDeviceAdapter(arrayListPairedDevices);
+        bluetoothDeviceAdapterScanneddDevices = new BluetoothDeviceAdapter(arrayListScannedDevices);
+
+
+        filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        mReceiver = new BroadcastReceiver() {
+            public void onReceive(Context context, Intent intent) {
+                String action = intent.getAction();
+                if (BluetoothDevice.ACTION_FOUND.equals(action)) {
+                    BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+                    String deviceName = device.getName();
+                    String deviceHardwareAddress = device.getAddress(); // MAC address
+                    Log.d(Server.TAG,"Found device : " + deviceName + " " + deviceHardwareAddress);
+                }
+            }
+        };
+
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+
+
+        registerReceiver(mReceiver, filter);
 
         if (!mBluetoothAdapter.isEnabled()) {
             Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
@@ -60,17 +99,32 @@ public class Server extends AppCompatActivity implements View.OnClickListener{
     @Override
     protected void onPause() {
         super.onPause();
-
+        unregisterReceiver(mReceiver);
     }
 
     private void setupUI(){
         buttonViewPairedDevices = findViewById(R.id.activity_server_button_view_paired_devices);
         buttonViewPairedDevices.setOnClickListener(this);
 
+        buttonStartScanDevices = findViewById(R.id.activity_server_button_start_scan_devices);
+        buttonStartScanDevices.setOnClickListener(this);
+
+        buttonStopScanDevices = findViewById(R.id.activity_server_button_stop_scan_devices);
+        buttonStopScanDevices.setOnClickListener(this);
+
+        RecyclerView.LayoutManager layoutManagerPairedDevices = new LinearLayoutManager(getApplicationContext());
+        RecyclerView.LayoutManager layoutManagerScannedDevices = new LinearLayoutManager(getApplicationContext());
 
         textViewBluetoothState = findViewById(R.id.activity_server_textview_bluetooth_state);
-        recyclerViewPairedDevices = findViewById(R.id.activity_server_recycler_view_paired_devices);
 
+        recyclerViewPairedDevices = findViewById(R.id.activity_server_recycler_view_paired_devices);
+        recyclerViewPairedDevices.setLayoutManager(layoutManagerPairedDevices);
+        recyclerViewPairedDevices.setItemAnimator(new DefaultItemAnimator());
+        recyclerViewPairedDevices.setAdapter(bluetoothDeviceAdapterPairedDevices);
+
+        recyclerViewScannedDevices = findViewById(R.id.activity_server_recycler_view_scanned_devices);
+        recyclerViewScannedDevices.setLayoutManager(layoutManagerScannedDevices);
+        recyclerViewScannedDevices.setItemAnimator(new DefaultItemAnimator());
     }
 
     @Override
@@ -78,15 +132,26 @@ public class Server extends AppCompatActivity implements View.OnClickListener{
         switch (view.getId()) {
             case R.id.activity_server_button_view_paired_devices:
                 Log.d(Server.TAG,"Clicked View Paired Devices");
+                arrayListPairedDevices = getPairedDevices();
+                bluetoothDeviceAdapterPairedDevices.setArrayListCustomBluetoothDevice(arrayListPairedDevices);
+                //bluetoothDeviceAdapterPairedDevices.notifyDataSetChanged();
+                recyclerViewPairedDevices.setAdapter(bluetoothDeviceAdapterPairedDevices);
+                break;
 
-                RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
-                recyclerViewPairedDevices.setLayoutManager(mLayoutManager);
-                recyclerViewPairedDevices.setItemAnimator(new DefaultItemAnimator());
-                ArrayList<CustomBluetoothDevice> pairedDevices = getPairedDevices();
-                bluetoothDeviceAdapter = new BluetoothDeviceAdapter(pairedDevices);
-                recyclerViewPairedDevices.setAdapter(bluetoothDeviceAdapter);
+            case R.id.activity_server_button_start_scan_devices:
+                Log.d(Server.TAG," Scan start click...");
+                mBluetoothAdapter.startDiscovery();
+                break;
 
-                bluetoothDeviceAdapter.notifyDataSetChanged();
+            case R.id.activity_server_button_stop_scan_devices:
+                Log.d(Server.TAG," Scan stop click...");
+                if(mBluetoothAdapter.isDiscovering()) {
+                    mBluetoothAdapter.cancelDiscovery();
+                    Log.d(Server.TAG,"calling mBluetoothAdapter.cancelDiscovery()");
+
+                } else {
+                    Log.d(Server.TAG,"mBluetoothAdapter.isDiscovering() is false...cannot mBluetoothAdapter.cancelDiscovery()");
+                }
                 break;
             default:
                 break;

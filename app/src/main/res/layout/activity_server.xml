@@ -1,33 +1,57 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context="com.examples.akshay.bluetoothfiletransfer.Client">
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
     <TextView
-        android:id="@+id/activity_server_bluetooth_state_status"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/bluetooth_state"/>
+            android:id="@+id/activity_server_bluetooth_state_status"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/bluetooth_state"/>
 
-    <TextView
-        android:id="@+id/activity_server_textview_bluetooth_state"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/unknown"/>
+        <TextView
+            android:id="@+id/activity_server_textview_bluetooth_state"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/unknown"/>
 
-    <Button
-        android:id="@+id/activity_server_button_view_paired_devices"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/paired_devices"/>
+        <Button
+            android:id="@+id/activity_server_button_start_scan_devices"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/SCAN"/>
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/activity_server_recycler_view_paired_devices"
-        android:scrollbars="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        <Button
+            android:id="@+id/activity_server_button_stop_scan_devices"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/stop_scan"/>
 
-</LinearLayout>
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/activity_server_recycler_view_scanned_devices"
+            android:scrollbars="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <Button
+            android:id="@+id/activity_server_button_view_paired_devices"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/paired_devices"/>
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/activity_server_recycler_view_paired_devices"
+            android:scrollbars="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+    </LinearLayout>
+
+</ScrollView>
