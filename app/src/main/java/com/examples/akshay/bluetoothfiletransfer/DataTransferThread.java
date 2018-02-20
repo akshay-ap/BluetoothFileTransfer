@@ -5,6 +5,7 @@ import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothServerSocket;
 import android.bluetooth.BluetoothSocket;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -15,44 +16,64 @@ import java.net.Socket;
  * Created by ash on 20/2/18.
  */
 
-public class DataTransferService extends Service {
-    private static final String TAG = "===DataTransferService";
+public class DataTransferThread extends AsyncTask {
+    private static final String TAG = "===DataTransferThread";
+    private static volatile DataTransferThread dataTransferThreadSingleton;
     BluetoothSocket socket;
-    BluetoothServerSocket serverSocket;
-    public DataTransferService(BluetoothSocket socket) {
-    }
 
-    @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
-        this.socket = SocketHolder.getBluetoothSocket();
-        Log.d(TAG,"onStartCommand()");
+    private DataTransferThread(BluetoothSocket socket) {
+        this.socket = socket;
 
-        if(SocketHolder.getMODE() == 0) {
-            if(this.socket == null) {
-                Log.d(TAG,"Won't work...socket is null");
+        if (dataTransferThreadSingleton != null){
+            throw new RuntimeException("Use getInstance() method to get the single instance of this class.");
+        }
+
+        if (SocketHolder.getMODE() == 0) {
+            if (this.socket == null) {
+                Log.d(TAG, "Won't work...socket is null");
 
             } else {
-                Log.d(TAG,"will work...socket is set");
+                Log.d(TAG, "will work...socket is set");
 
             }
-        } else if(SocketHolder.getMODE() ==1 ){
-            if(this.socket == null) {
-                Log.d(TAG,"won't work...socket is null");
+        } else if (SocketHolder.getMODE() == 1) {
+            if (this.socket == null) {
+                Log.d(TAG, "won't work...socket is null");
 
             } else {
-                Log.d(TAG,"will work...serversocket is set");
+                Log.d(TAG, "will work...serversocket is set");
             }
         } else {
-            Log.d(TAG,"Invalid socket state");
+            Log.d(TAG, "Invalid socket state :" +  SocketHolder.getMODE());
 
         }
-        return super.onStartCommand(intent, flags, startId);
     }
 
-    @Nullable
+    public static DataTransferThread getInstance(BluetoothSocket socket) {
+        if(dataTransferThreadSingleton == null ) {
+
+            synchronized (DataTransferThread.class) {   //Check for the second time.
+                //if there is no instance available... create new one
+                if (dataTransferThreadSingleton == null) {
+                    dataTransferThreadSingleton = new DataTransferThread(socket);
+                }
+            }
+        }
+
+    return dataTransferThreadSingleton;
+    }
+
     @Override
-    public IBinder onBind(Intent intent) {
-        return null;
+    protected Object doInBackground(Object[] objects) {
+
+        while (true) {
+            try {
+                Thread.sleep(5000);
+                Log.d(DataTransferThread.TAG," in run()");
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }
 //    private class ConnectedThread extends Thread {

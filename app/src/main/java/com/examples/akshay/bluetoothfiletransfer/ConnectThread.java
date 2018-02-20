@@ -69,9 +69,8 @@ public class ConnectThread extends Thread {
         SocketHolder.setMODE(0);
         SocketHolder.setBluetoothSocket(mmSocket);
         //DataTransferService dataTransferService = new DataTransferService(mmSocket);
-        Intent intent = new Intent(context,DataTransferService.class);
-        context.startService(intent);
-
+        //DataTransferThread dataTransferThread = DataTransferThread.getInstance(mmSocket);
+        //dataTransferThread.run();
 
     }
 

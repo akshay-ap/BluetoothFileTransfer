@@ -33,8 +33,8 @@ public class DataTransfer extends AppCompatActivity implements View.OnClickListe
         broadcastReceiver = getBroadCastReceiver();
         intentFilter = new IntentFilter();
         intentFilter.addAction(Constants.DATA_TRANSFER_ACTION);
-
-        //Start our own service
+        DataTransferThread dataTransferThread = DataTransferThread.getInstance(SocketHolder.getBluetoothSocket());
+        dataTransferThread.execute();
     }
 
     private void setupUI() {

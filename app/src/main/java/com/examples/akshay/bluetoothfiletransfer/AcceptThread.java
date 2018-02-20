@@ -58,9 +58,7 @@ public class AcceptThread extends Thread {
                 //manageMyConnectedSocket(socket);
                 SocketHolder.setMODE(1);
                 SocketHolder.setBluetoothSocket(socket);
-                //DataTransferService dataTransferService = new DataTransferService(mmSocket);
-                Intent intent = new Intent(context,DataTransferService.class);
-                context.startService(intent);
+
                 try {
                     mmServerSocket.close();
                 } catch (IOException e) {
