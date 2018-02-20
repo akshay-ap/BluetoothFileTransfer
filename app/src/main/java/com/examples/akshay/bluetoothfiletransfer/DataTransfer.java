@@ -4,6 +4,8 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -22,7 +24,8 @@ public class DataTransfer extends AppCompatActivity implements View.OnClickListe
     BroadcastReceiver broadcastReceiver;
     Button buttonSend;
     IntentFilter intentFilter;
-
+    DataTransferThread dataTransferThread;
+    static Handler handler;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,7 +36,19 @@ public class DataTransfer extends AppCompatActivity implements View.OnClickListe
         broadcastReceiver = getBroadCastReceiver();
         intentFilter = new IntentFilter();
         intentFilter.addAction(Constants.DATA_TRANSFER_ACTION);
-        DataTransferThread dataTransferThread = DataTransferThread.getInstance(SocketHolder.getBluetoothSocket());
+
+        handler = new Handler(){
+            @Override
+            public void handleMessage(Message msg) {
+                super.handleMessage(msg);
+                String text = (String)msg.obj;
+                Log.d(DataTransfer.TAG,text);
+                textViewDataReceived.setText(text);
+            }
+        };
+
+
+        dataTransferThread = DataTransferThread.getInstance(SocketHolder.getBluetoothSocket(),handler);
         dataTransferThread.execute();
     }
 
@@ -63,6 +78,10 @@ public class DataTransfer extends AppCompatActivity implements View.OnClickListe
             case R.id.activity_data_transfer_button_send:
                 Log.d(DataTransfer.TAG,"Attempting to send data");
                 String toSend = editTextInput.getText().toString();
+                if(dataTransferThread != null) {
+                    toSend = toSend + "";
+                    dataTransferThread.write(toSend.getBytes());
+                }
                 break;
             default:
                 break;
