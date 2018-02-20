@@ -2,10 +2,12 @@ package com.examples.akshay.bluetoothfiletransfer;
 
 import android.app.Service;
 import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothServerSocket;
 import android.bluetooth.BluetoothSocket;
 import android.content.Intent;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
 import java.net.Socket;
 
@@ -14,10 +16,37 @@ import java.net.Socket;
  */
 
 public class DataTransferService extends Service {
-
+    private static final String TAG = "===DataTransferService";
     BluetoothSocket socket;
+    BluetoothServerSocket serverSocket;
     public DataTransferService(BluetoothSocket socket) {
-    this.socket = socket;
+    }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        this.socket = SocketHolder.getBluetoothSocket();
+        Log.d(TAG,"onStartCommand()");
+
+        if(SocketHolder.getMODE() == 0) {
+            if(this.socket == null) {
+                Log.d(TAG,"Won't work...socket is null");
+
+            } else {
+                Log.d(TAG,"will work...socket is set");
+
+            }
+        } else if(SocketHolder.getMODE() ==1 ){
+            if(this.socket == null) {
+                Log.d(TAG,"won't work...socket is null");
+
+            } else {
+                Log.d(TAG,"will work...serversocket is set");
+            }
+        } else {
+            Log.d(TAG,"Invalid socket state");
+
+        }
+        return super.onStartCommand(intent, flags, startId);
     }
 
     @Nullable

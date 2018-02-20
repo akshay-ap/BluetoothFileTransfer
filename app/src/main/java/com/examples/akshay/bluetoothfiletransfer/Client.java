@@ -20,7 +20,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Set;
@@ -67,12 +66,15 @@ public class Client extends AppCompatActivity implements View.OnClickListener{
 
         filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
         filter.addAction(BluetoothAdapter.ACTION_DISCOVERY_STARTED);
+        filter.addAction(BluetoothAdapter.ACTION_CONNECTION_STATE_CHANGED);
         filter.addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
 
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         mReceiver = new BroadcastReceiver() {
             public void onReceive(Context context, Intent intent) {
                 String action = intent.getAction();
+                Log.d(Client.TAG,"onReceive()");
+
                 if (BluetoothDevice.ACTION_FOUND.equals(action)) {
 
                     BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
@@ -88,6 +90,8 @@ public class Client extends AppCompatActivity implements View.OnClickListener{
                     Log.d(Client.TAG,"ACTION_DISCOVERY_STARTED");
                 } else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
                     Log.d(Client.TAG,"ACTION_DISCOVERY_FINISHED");
+                } else if(BluetoothAdapter.ACTION_CONNECTION_STATE_CHANGED.equals(action)) {
+                    Log.d(Client.TAG,"Connection State Changed");
                 }
             }
         };
@@ -183,7 +187,7 @@ public class Client extends AppCompatActivity implements View.OnClickListener{
                     Log.d(Client.TAG,"bluetoothDeviceSelected is null");
                     return;
                 }
-                 ConnectThread connectThread = new ConnectThread(bluetoothDeviceSelected,mBluetoothAdapter);
+                 ConnectThread connectThread = new ConnectThread(this,bluetoothDeviceSelected,mBluetoothAdapter);
                 connectThread.run();
                 break;
 

@@ -1,7 +1,12 @@
 package com.examples.akshay.bluetoothfiletransfer;
 
 import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothClass;
+import android.bluetooth.BluetoothDevice;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -17,21 +22,26 @@ public class Server extends AppCompatActivity implements View.OnClickListener{
     TextView textViewBluetoothState;
     Button buttonMakeDiscoverable;
     Button buttonAccpet;
+    BroadcastReceiver broadcastReceiver;
     Button buttonDataTransfer;
     BluetoothAdapter mBluetoothAdapter;
     private boolean isBluetoothOn;
+    IntentFilter intentFilter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_server);
         setupUI();
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        broadcastReceiver = getBraodCastReceiver();
+        intentFilter = new IntentFilter(BluetoothAdapter.ACTION_CONNECTION_STATE_CHANGED);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-
+        registerReceiver(broadcastReceiver,intentFilter);
         if (!mBluetoothAdapter.isEnabled()) {
             Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
@@ -43,14 +53,13 @@ public class Server extends AppCompatActivity implements View.OnClickListener{
             isBluetoothOn =false;
             textViewBluetoothState.setText(R.string.STATE_ON);
             Log.d(TAG, "ON");
-
-
         }
     }
 
     @Override
     protected void onPause() {
         super.onPause();
+        unregisterReceiver(broadcastReceiver);
 
     }
 
@@ -79,7 +88,7 @@ public class Server extends AppCompatActivity implements View.OnClickListener{
                 break;
             case R.id.activity_server_accept_connections:
                 Log.d(Server.TAG,"accept() click...");
-                AcceptThread acceptThread = new AcceptThread(mBluetoothAdapter);
+                AcceptThread acceptThread = new AcceptThread(this,mBluetoothAdapter);
                 acceptThread.run();
                 break;
             case R.id.activity_server_transfer_data:
@@ -93,7 +102,18 @@ public class Server extends AppCompatActivity implements View.OnClickListener{
         }
     }
 
+    private BroadcastReceiver getBraodCastReceiver() {
+        BroadcastReceiver mReceiver;
+        mReceiver = new BroadcastReceiver() {
+            public void onReceive(Context context, Intent intent) {
+                Log.d(Server.TAG,"onReceive()");
 
-
-
+                String action = intent.getAction();
+                if(BluetoothAdapter.ACTION_CONNECTION_STATE_CHANGED.equals(action)) {
+                    Log.d(Server.TAG,"Connection State Changed");
+                }
+            }
+        };
+        return  mReceiver;
+    }
 }

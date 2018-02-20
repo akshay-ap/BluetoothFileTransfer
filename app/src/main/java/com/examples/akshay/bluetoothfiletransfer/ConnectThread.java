@@ -3,11 +3,14 @@ package com.examples.akshay.bluetoothfiletransfer;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
-import android.provider.ContactsContract;
+import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 
 import java.io.IOException;
 import java.util.UUID;
+
+import static com.examples.akshay.bluetoothfiletransfer.Constants.DATA_TRANSFER_SOCKET;
 
 
 /**
@@ -20,13 +23,14 @@ public class ConnectThread extends Thread {
     private final BluetoothSocket mmSocket;
     private final BluetoothDevice mmDevice;
     private BluetoothAdapter mBluetoothAdapter;
-    public ConnectThread(BluetoothDevice device, BluetoothAdapter bluetoothAdapter) {
+    private Context context;
+    public ConnectThread(Context context,BluetoothDevice device, BluetoothAdapter bluetoothAdapter) {
         // Use a temporary object that is later assigned to mmSocket
         // because mmSocket is final.
         BluetoothSocket tmp = null;
         this.mBluetoothAdapter = bluetoothAdapter;
-        mmDevice = device;
-
+        this.mmDevice = device;
+        this.context = context;
         try {
             // Get a BluetoothSocket to connect with the given BluetoothDevice.
             // MY_UUID is the app's UUID string, also used in the server code.
@@ -44,7 +48,9 @@ public class ConnectThread extends Thread {
         try {
             // Connect to the remote device through the socket. This call blocks
             // until it succeeds or throws an exception.
+            Log.d(ConnectThread.TAG,"Trying to connect to server...");
             mmSocket.connect();
+            Log.d(ConnectThread.TAG, "Connected...");
         } catch (IOException connectException) {
             // Unable to connect; close the socket and return.
             try {
@@ -60,6 +66,13 @@ public class ConnectThread extends Thread {
         //manageMyConnectedSocket(mmSocket);
         //DataTransferService dataTransferService = new DataTransferService(mmSocket);
         //startService()
+        SocketHolder.setMODE(0);
+        SocketHolder.setBluetoothSocket(mmSocket);
+        //DataTransferService dataTransferService = new DataTransferService(mmSocket);
+        Intent intent = new Intent(context,DataTransferService.class);
+        context.startService(intent);
+
+
     }
 
     // Closes the client socket and causes the thread to finish.
