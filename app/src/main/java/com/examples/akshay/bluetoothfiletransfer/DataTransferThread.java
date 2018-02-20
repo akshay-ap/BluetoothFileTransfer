@@ -9,6 +9,7 @@ import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
+import android.provider.ContactsContract;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
@@ -25,12 +26,12 @@ import static android.bluetooth.BluetoothAdapter.STATE_CONNECTED;
 
 public class DataTransferThread extends AsyncTask {
     private static final String TAG = "===DataTransferThread";
-    private static volatile DataTransferThread dataTransferThreadSingleton;
+    //private static volatile DataTransferThread dataTransferThreadSingleton;
     BluetoothSocket socket;
     private final InputStream mmInStream;
     private final OutputStream mmOutStream;
     private Handler handler;
-    private DataTransferThread(BluetoothSocket socket, Handler handler) {
+    public DataTransferThread(BluetoothSocket socket, Handler handler) {
         this.socket = socket;
         InputStream tmpIn = null;
         OutputStream tmpOut = null;
@@ -47,9 +48,9 @@ public class DataTransferThread extends AsyncTask {
             //mState = STATE_CONNECTED;
 
 
-        if (dataTransferThreadSingleton != null){
-            throw new RuntimeException("Use getInstance() method to get the single instance of this class.");
-        }
+//        if (dataTransferThreadSingleton != null){
+//            throw new RuntimeException("Use getInstance() method to get the single instance of this class.");
+//        }
 
         if (SocketHolder.getMODE() == 0) {
             if (this.socket == null) {
@@ -72,24 +73,26 @@ public class DataTransferThread extends AsyncTask {
         }
     }
 
-    public static DataTransferThread getInstance(BluetoothSocket socket,Handler handler) {
-        if(dataTransferThreadSingleton == null ) {
-
-            synchronized (DataTransferThread.class) {   //Check for the second time.
-                //if there is no instance available... create new one
-                if (dataTransferThreadSingleton == null) {
-                    dataTransferThreadSingleton = new DataTransferThread(socket, handler);
-                }
-            }
-        }
-
-    return dataTransferThreadSingleton;
-    }
+//    public static DataTransferThread getInstance(BluetoothSocket socket,Handler handler) {
+//        if(dataTransferThreadSingleton == null ) {
+//
+//            synchronized (DataTransferThread.class) {   //Check for the second time.
+//                //if there is no instance available... create new one
+//                if (dataTransferThreadSingleton == null) {
+//                    dataTransferThreadSingleton = new DataTransferThread(socket, handler);
+//                }
+//
+//
+//            }
+//        }
+//
+//    return dataTransferThreadSingleton;
+//    }
 
     @Override
     protected Object doInBackground(Object[] objects) {
 
-        while (true) {
+        while (!isCancelled()) {
             try {
                 Thread.sleep(1000);
                 byte[] buffer = new byte[1024];
@@ -97,6 +100,9 @@ public class DataTransferThread extends AsyncTask {
                 try {
                     // Read from the InputStream
                     bytes = mmInStream.read(buffer);
+                    if(bytes == -1) {
+                        continue;
+                    }
                     String text = new String(buffer);
                     text = text.substring(0,bytes);
                     Log.d(DataTransferThread.TAG,text);
@@ -110,6 +116,8 @@ public class DataTransferThread extends AsyncTask {
                     Log.e(TAG, "disconnected", e);
                     //connectionLost();
                     break;
+                } catch (Exception e) {
+                    Log.e(DataTransferThread.TAG,e.toString());
                 }
                 Log.d(DataTransferThread.TAG," in run()");
             } catch (InterruptedException e) {
