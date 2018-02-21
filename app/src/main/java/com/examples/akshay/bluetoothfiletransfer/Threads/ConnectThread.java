@@ -4,6 +4,7 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.content.Context;
+import android.os.AsyncTask;
 import android.util.Log;
 
 import com.examples.akshay.bluetoothfiletransfer.Constants;
@@ -18,7 +19,7 @@ import java.util.UUID;
  *
  */
 
-public class ConnectThread extends Thread {
+public class ConnectThread extends AsyncTask {
     private static final String TAG = "===ConnectThread";
     private final BluetoothSocket mmSocket;
     private final BluetoothDevice mmDevice;
@@ -41,7 +42,10 @@ public class ConnectThread extends Thread {
         mmSocket = tmp;
     }
 
-    public void run() {
+
+    @Override
+    protected Object doInBackground(Object[] objects) {
+
         // Cancel discovery because it otherwise slows down the connection.
         if(mBluetoothAdapter.isDiscovering()) {
             mBluetoothAdapter.cancelDiscovery();
@@ -60,20 +64,13 @@ public class ConnectThread extends Thread {
             } catch (IOException closeException) {
                 Log.e(TAG, "Could not close the client socket", closeException);
             }
-            return;
+            return null;
         }
 
-        // The connection attempt succeeded. Perform work associated with
-        // the connection in a separate thread.
-        //manageMyConnectedSocket(mmSocket);
-        //DataTransferService dataTransferService = new DataTransferService(mmSocket);
-        //startService()
         SocketHolder.setMODE(0);
         SocketHolder.setBluetoothSocket(mmSocket);
-        //DataTransferService dataTransferService = new DataTransferService(mmSocket);
-        //DataTransferTask dataTransferThread = DataTransferTask.getInstance(mmSocket);
-        //dataTransferThread.run();
 
+        return null;
     }
 
     // Closes the client socket and causes the thread to finish.
@@ -84,4 +81,5 @@ public class ConnectThread extends Thread {
             Log.e(TAG, "Could not close the client socket", e);
         }
     }
+
 }

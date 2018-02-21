@@ -177,6 +177,7 @@ public class Client extends AppCompatActivity implements View.OnClickListener{
     private void setupUI(){
         buttonViewPairedDevices = findViewById(R.id.activity_client_button_view_paired_devices);
         buttonViewPairedDevices.setOnClickListener(this);
+        buttonViewPairedDevices.setVisibility(View.GONE);
 
         buttonStartScanDevices = findViewById(R.id.activity_client_button_start_scan_devices);
         buttonStartScanDevices.setOnClickListener(this);
@@ -263,8 +264,8 @@ public class Client extends AppCompatActivity implements View.OnClickListener{
                     Log.d(Client.TAG,"bluetoothDeviceSelected is null");
                     return;
                 }
-                 ConnectThread connectThread = new ConnectThread(this,bluetoothDeviceSelected,mBluetoothAdapter);
-                connectThread.run();
+                ConnectThread connectThread = new ConnectThread(this,bluetoothDeviceSelected,mBluetoothAdapter);
+                connectThread.execute();
                 break;
 
             case R.id.activity_client_transfer_data:
