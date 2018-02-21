@@ -8,6 +8,7 @@ import android.os.AsyncTask;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
+import android.provider.ContactsContract;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -21,6 +22,7 @@ import com.examples.akshay.bluetoothfiletransfer.Constants;
 import com.examples.akshay.bluetoothfiletransfer.Tasks.DataTransferTask;
 import com.examples.akshay.bluetoothfiletransfer.R;
 import com.examples.akshay.bluetoothfiletransfer.SocketHolder;
+import com.examples.akshay.bluetoothfiletransfer.Tasks.FileReceiverTask;
 import com.examples.akshay.bluetoothfiletransfer.Tasks.FileSenderTask;
 import com.obsez.android.lib.filechooser.ChooserDialog;
 
@@ -38,9 +40,10 @@ public class DataTransfer extends AppCompatActivity implements View.OnClickListe
     Button buttonSend;
     Button buttonTest1;
     Button buttonTest2;
-
+    FileReceiverTask fileReceiverTask;
     IntentFilter intentFilter;
-    DataTransferTask dataTransferTask;
+    //DataTransferTask dataTransferTask;
+    FileSenderTask fileSenderTask;
     static Handler handler;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -110,10 +113,10 @@ public class DataTransfer extends AppCompatActivity implements View.OnClickListe
             case R.id.activity_data_transfer_button_send:
                 Log.d(DataTransfer.TAG,"Attempting to send data");
                 String toSend = editTextInput.getText().toString();
-                if(dataTransferTask != null) {
-                    toSend = toSend + "";
-                    dataTransferTask.write(toSend.getBytes());
-                }
+//                if(dataTransferTask != null) {
+//                    toSend = toSend + "";
+//                    dataTransferTask.write(toSend.getBytes());
+//                }
                 break;
             case R.id.activity_data_transfer_test_1:
                 /*Log.d(DataTransfer.TAG,"test click");
@@ -121,7 +124,7 @@ public class DataTransfer extends AppCompatActivity implements View.OnClickListe
                 Toast.makeText(DataTransfer.this, "FILE: " + filePath, Toast.LENGTH_SHORT).show();
                 FileSenderTask fileSenderTask = new FileSenderTask(filePath);
                 fileSenderTask.execute();*/
-                try {
+                /*try {
                     Log.d(DataTransfer.TAG,"Trying to close socket..." + SocketHolder.getBluetoothSocket().isConnected());
                     SocketHolder.getBluetoothSocket().close();
                     Log.d(DataTransfer.TAG,"closed socket...");
@@ -129,7 +132,17 @@ public class DataTransfer extends AppCompatActivity implements View.OnClickListe
                     e.printStackTrace();
                     Log.d(DataTransfer.TAG,"Failed to close socket...");
                     Log.d(DataTransfer.TAG,e.toString());
+                }*/
+                String receivePath = String.valueOf(Environment.getExternalStorageDirectory());
+                receivePath = receivePath+"/odk/forms/temp.xml";
+                Log.d(DataTransfer.TAG,"Write path : " + receivePath);
+                if(fileReceiverTask == null || fileReceiverTask.getStatus() == AsyncTask.Status.FINISHED) {
+                    fileReceiverTask = new FileReceiverTask(receivePath);
+                    fileReceiverTask.execute();
+                } else {
+                    Toast.makeText(DataTransfer.this,"Already running another task",Toast.LENGTH_SHORT).show();
                 }
+
 
                 break;
             case R.id.activity_data_transfer_test_2:
@@ -140,8 +153,14 @@ public class DataTransfer extends AppCompatActivity implements View.OnClickListe
                         @Override
                         public void onChoosePath(String path, File pathFile) {
                             Toast.makeText(DataTransfer.this, "FILE: " + path, Toast.LENGTH_SHORT).show();
-                            FileSenderTask fileSenderTask = new FileSenderTask(path);
-                            fileSenderTask.execute();
+                            if(fileSenderTask == null || fileSenderTask.getStatus() == AsyncTask.Status.FINISHED) {
+                                fileSenderTask = new FileSenderTask(path);
+                                fileSenderTask.execute();
+                            }  else {
+                                Toast.makeText(DataTransfer.this,"Already in sending task is running",Toast.LENGTH_SHORT).show();
+                                Log.d(DataTransfer.TAG,"already sending task is running");
+                            }
+
                         }
                     })
                     .build()

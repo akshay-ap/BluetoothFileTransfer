@@ -54,7 +54,7 @@ public class AcceptConnectionTask extends AsyncTask {
         // Keep listening until exception occurs or a socket is returned.
         while (true) {
             try {
-                Log.d(AcceptConnectionTask.TAG,"Trying to accpet connections...");
+                Log.d(AcceptConnectionTask.TAG,"Trying to accept connections...");
                 socket = mmServerSocket.accept();
                 Log.d(AcceptConnectionTask.TAG,"Accepted Connection");
 
@@ -74,7 +74,7 @@ public class AcceptConnectionTask extends AsyncTask {
                 }
                 break;
             } else {
-                Log.d(AcceptConnectionTask.TAG,"sokcet object is null");
+                Log.d(AcceptConnectionTask.TAG,"socket object is null");
             }
         }
         return null;

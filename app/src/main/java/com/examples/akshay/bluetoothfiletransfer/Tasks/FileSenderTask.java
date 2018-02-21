@@ -8,6 +8,7 @@ import android.webkit.WebView;
 
 import com.examples.akshay.bluetoothfiletransfer.SocketHolder;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -40,47 +41,48 @@ public class FileSenderTask extends AsyncTask {
 
     @Override
     protected Object doInBackground(Object[] objects) {
-        write();
+
+
         try {
-            Log.d(FileSenderTask.TAG,"trying to close the outputStream...");
-            outputStream.flush();
-            //outputStream.close();
-
-        } catch (IOException e) {
-            Log.d(FileSenderTask.TAG,"outputStream closing failed");
-            e.printStackTrace();
-            Log.d(FileSenderTask.TAG,e.toString());
-        }
-        return null;
-    }
-
-
-    public void write() {
-        try {
-            //String path = Environment.getExternalStorageDirectory()+"/"+filePath;
-
             Log.d(FileSenderTask.TAG,"Trying to open : "+ filePath);
             File file = new File(filePath);
 
             FileInputStream fileInputStream = new FileInputStream(file);
             if(!file.exists()) {
                 Log.d(FileSenderTask.TAG,"File does not exist");
-                return;
+                return null ;
             } else {
                 Log.d(FileSenderTask.TAG,"File exists");
-
             }
-            //outputStream.write();
+
+            int bytesRead = 0;
+            byte[] buffer = new byte[1024]; // or// 4096 or more
+            int loop =0;
+            while ((bytesRead = fileInputStream.read(buffer)) > 0)
+            {
+                loop++;
+                outputStream.write(buffer, 0, bytesRead);
+            }
+
+            Log.d(FileSenderTask.TAG,"Loop iterations run : " + loop);
+            Log.d(FileSenderTask.TAG,"trying to close the fileInputStream...");
+            fileInputStream.close();
+            Log.d(FileSenderTask.TAG,"trying to close the outputStream...");
+            outputStream.close();
+
         } catch (IOException e) {
             Log.e(FileSenderTask.TAG, "Exception during write", e);
             Log.d(FileSenderTask.TAG,e.toString());
         }
+
+        return null;
     }
+
 
     @Override
     protected void onPostExecute(Object o) {
 
-        Log.d(FileSenderTask.TAG,"Task ececution completed");
+        Log.d(FileSenderTask.TAG,"Task execution completed");
 
         super.onPostExecute(o);
     }
