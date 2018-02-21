@@ -43,7 +43,9 @@ public class ConnectThread extends Thread {
 
     public void run() {
         // Cancel discovery because it otherwise slows down the connection.
-        mBluetoothAdapter.cancelDiscovery();
+        if(mBluetoothAdapter.isDiscovering()) {
+            mBluetoothAdapter.cancelDiscovery();
+        }
 
         try {
             // Connect to the remote device through the socket. This call blocks

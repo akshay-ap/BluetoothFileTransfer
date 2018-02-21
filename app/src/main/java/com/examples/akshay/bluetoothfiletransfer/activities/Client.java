@@ -3,6 +3,7 @@ package com.examples.akshay.bluetoothfiletransfer.activities;
 import android.Manifest;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -28,6 +29,7 @@ import android.widget.Toast;
 import com.examples.akshay.bluetoothfiletransfer.BluetoothDeviceAdapter;
 import com.examples.akshay.bluetoothfiletransfer.Threads.ConnectThread;
 import com.examples.akshay.bluetoothfiletransfer.R;
+import com.examples.akshay.bluetoothfiletransfer.Utils;
 
 import java.util.ArrayList;
 import java.util.Set;
@@ -67,6 +69,7 @@ public class Client extends AppCompatActivity implements View.OnClickListener{
         setContentView(R.layout.activity_client);
 
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        BluetoothManager bluetoothManager;
 
         setupUI();
         setState();
@@ -114,6 +117,13 @@ public class Client extends AppCompatActivity implements View.OnClickListener{
                     if(alertDialog.isShowing()) {
                         alertDialog.dismiss();
                     }
+
+                    //For logging purpose
+                    ArrayList<BluetoothDevice> Connecteddevices = Utils.getPairedDevices(mBluetoothAdapter);
+                    for (BluetoothDevice d : Connecteddevices) {
+                        Log.d(Client.TAG,d.getName() + " " + d.getAddress() + " " + d.getBondState());
+                    }
+
                     Toast.makeText(Client.this, R.string.device_connected,Toast.LENGTH_SHORT).show();
                     buttonTransferData.setEnabled(true);
 

@@ -19,7 +19,11 @@ import android.widget.Toast;
 import com.examples.akshay.bluetoothfiletransfer.Constants;
 import com.examples.akshay.bluetoothfiletransfer.Tasks.AcceptConnectionTask;
 import com.examples.akshay.bluetoothfiletransfer.R;
+import com.examples.akshay.bluetoothfiletransfer.Utils;
 
+
+import java.util.ArrayList;
+import java.util.Set;
 
 import static com.examples.akshay.bluetoothfiletransfer.Constants.REQUEST_ENABLE_BT;
 
@@ -34,7 +38,7 @@ public class Server extends AppCompatActivity implements View.OnClickListener{
     BluetoothAdapter mBluetoothAdapter;
     IntentFilter intentFilter;
     AlertDialog alertDialog;
-
+    ArrayList<BluetoothDevice> pairedDevices;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -151,6 +155,13 @@ public class Server extends AppCompatActivity implements View.OnClickListener{
                     if(alertDialog.isShowing()) {
                         alertDialog.dismiss();
                     }
+
+                    //For logging purpose
+                    ArrayList<BluetoothDevice> Connecteddevices = Utils.getPairedDevices(mBluetoothAdapter);
+                    for (BluetoothDevice d : Connecteddevices) {
+                        Log.d(Server.TAG,d.getName() + " " + d.getAddress() + " " + d.getBondState());
+                    }
+
                     Toast.makeText(Server.this,R.string.device_connected,Toast.LENGTH_SHORT).show();
 
                 } else if (BluetoothDevice.ACTION_ACL_DISCONNECTED.equals(action)) {
@@ -212,4 +223,5 @@ public class Server extends AppCompatActivity implements View.OnClickListener{
                 break;
         }
     }
+
 }
