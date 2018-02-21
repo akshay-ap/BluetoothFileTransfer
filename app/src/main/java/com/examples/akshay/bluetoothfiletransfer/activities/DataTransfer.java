@@ -42,31 +42,6 @@ public class DataTransfer extends AppCompatActivity implements View.OnClickListe
         broadcastReceiver = getBroadCastReceiver();
         intentFilter = new IntentFilter();
         intentFilter.addAction(Constants.DATA_TRANSFER_ACTION);
-
-//        handler = new Handler(){
-//            @Override
-//            public void handleMessage(Message msg) {
-//                super.handleMessage(msg);
-//                String text = (String)msg.obj;
-//                Log.d(DataTransfer.TAG,text);
-//                textViewDataReceived.setText(text);
-//            }
-//        };
-
-        handler = new Handler(new Handler.Callback() {
-            @Override
-            public boolean handleMessage(Message message) {
-                String text = (String)message.obj;
-                Log.d(DataTransfer.TAG,text);
-                Toast.makeText(getApplicationContext(),text,Toast.LENGTH_SHORT).show();
-                textViewDataReceived.setText(text);
-                return false;
-            }
-        });
-
-        //dataTransferTask = DataTransferTask.getInstance(SocketHolder.getBluetoothSocket(),handler);
-
-
     }
 
     private void setupUI() {
@@ -80,6 +55,22 @@ public class DataTransfer extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onResume() {
         super.onResume();
+
+        handler = new Handler(new Handler.Callback() {
+            @Override
+            public boolean handleMessage(Message message) {
+                final String text = (String)message.obj;
+                Log.d(DataTransfer.TAG,text);
+                Toast.makeText(getApplicationContext(),text,Toast.LENGTH_SHORT).show();
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        textViewDataReceived.setText(text);
+                    }
+                });
+                return false;
+            }
+        });
         dataTransferTask = new DataTransferTask(SocketHolder.getBluetoothSocket(),handler);
         if(!(dataTransferTask.getStatus() == AsyncTask.Status.RUNNING)) {
             dataTransferTask.execute();

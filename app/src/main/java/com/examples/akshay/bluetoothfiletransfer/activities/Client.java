@@ -5,12 +5,14 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -49,7 +51,7 @@ public class Client extends AppCompatActivity implements View.OnClickListener{
     BluetoothDeviceAdapter bluetoothDeviceAdapterScanedDevices;
 
     ProgressBar progressBarScanDevices;
-
+    AlertDialog alertDialog;
     ArrayList<BluetoothDevice> arrayListPairedDevices;
     ArrayList<BluetoothDevice> arrayListScannedDevices = new ArrayList<>();
 
@@ -104,9 +106,15 @@ public class Client extends AppCompatActivity implements View.OnClickListener{
                 } else if (BluetoothDevice.ACTION_ACL_DISCONNECTED.equals(action)) {
                     Log.d(Client.TAG,"ACTION_ACL_DISCONNECTED");
                     buttonTransferData.setEnabled(false);
+                    Toast.makeText(Client.this, R.string.device_disconnected,Toast.LENGTH_SHORT).show();
+
 
                 } else if (BluetoothDevice.ACTION_ACL_CONNECTED.equals(action)) {
                     Log.d(Client.TAG,"ACTION_ACL_CONNECTED");
+                    if(alertDialog.isShowing()) {
+                        alertDialog.dismiss();
+                    }
+                    Toast.makeText(Client.this, R.string.device_connected,Toast.LENGTH_SHORT).show();
                     buttonTransferData.setEnabled(true);
 
                 } else if (BluetoothDevice.ACTION_ACL_DISCONNECT_REQUESTED.equals(action)) {
@@ -192,6 +200,20 @@ public class Client extends AppCompatActivity implements View.OnClickListener{
         progressBarScanDevices = findViewById(R.id.acitivity_client_progressBar_scan_devices);
         progressBarScanDevices.setVisibility(View.GONE);
 
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("Connecting...");
+
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                Log.d(Client.TAG,"Cancel button Clicked");
+            }
+        });
+
+        builder.setCancelable(true);
+        alertDialog = builder.create();
+
+
     }
 
     @Override
@@ -222,6 +244,10 @@ public class Client extends AppCompatActivity implements View.OnClickListener{
                 }
                 break;
             case R.id.activity_client_button_connect:
+
+                if(!alertDialog.isShowing()) {
+                    alertDialog.show();
+                }
                 Log.d(Client.TAG,"connect click");
                 if(bluetoothDeviceSelected == null) {
                     Log.d(Client.TAG,"bluetoothDeviceSelected is null");
@@ -320,16 +346,13 @@ public class Client extends AppCompatActivity implements View.OnClickListener{
                 if(mBluetoothAdapter.isDiscovering()) {
                     Log.d(Client.TAG,"Cancelling discovery");
                     mBluetoothAdapter.cancelDiscovery();
-
                 }
                 textViewBluetoothState.setText(R.string.STATE_TURNING_OFF);
-
                 break;
             default:
                 textViewBluetoothState.setText(R.string.unknown);
                 break;
         }
-
         if(mBluetoothAdapter.isDiscovering()) {
             buttonStartScanDevices.setEnabled(false);
             buttonStopScanDevices.setEnabled(true);
@@ -338,6 +361,4 @@ public class Client extends AppCompatActivity implements View.OnClickListener{
             buttonStopScanDevices.setEnabled(false);
         }
     }
-
-
 }

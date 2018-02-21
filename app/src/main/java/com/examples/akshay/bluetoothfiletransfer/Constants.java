@@ -12,6 +12,6 @@ public class Constants {
     public static final String NAME = "BluetoothFileTransfer";
     public static final String DATA_TRANSFER_ACTION = "DATA_TRANSFER_ACTION";
     public static final String DATA_TRANSFER_DATA = "DATA_TRANSFER_DATA";
-    public static final String  DATA_TRANSFER_SOCKET= "DATA_TRANSFER_SOCKET";
-
+    public static final String  DATA_TRANSFER_SOCKET = "DATA_TRANSFER_SOCKET";
+    public static final int DISCOVERABLE_DURATION = 120;
 }

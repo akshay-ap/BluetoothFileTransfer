@@ -23,4 +23,6 @@
     <string name="data_received">Data Received</string>
     <string name="transfer_data">TRANSFER DATA</string>
     <string name="send">SEND</string>
+    <string name="device_connected">Device connected</string>
+    <string name="device_disconnected">Device Disconnected</string>
 </resources>

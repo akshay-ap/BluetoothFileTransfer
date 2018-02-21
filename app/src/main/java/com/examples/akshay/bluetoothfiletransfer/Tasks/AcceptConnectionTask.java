@@ -1,9 +1,10 @@
-package com.examples.akshay.bluetoothfiletransfer.Threads;
+package com.examples.akshay.bluetoothfiletransfer.Tasks;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothServerSocket;
 import android.bluetooth.BluetoothSocket;
 import android.content.Context;
+import android.os.AsyncTask;
 import android.util.Log;
 
 import com.examples.akshay.bluetoothfiletransfer.SocketHolder;
@@ -18,12 +19,12 @@ import static com.examples.akshay.bluetoothfiletransfer.Constants.NAME;
  * Created by ash on 20/2/18.
  */
 
-public class AcceptThread extends Thread {
+public class AcceptConnectionTask extends AsyncTask {
     private static final String TAG = "===AccpeThread";
     private final BluetoothServerSocket mmServerSocket;
     private BluetoothAdapter mBluetoothAdapter;
     private Context context;
-    public AcceptThread(Context context,BluetoothAdapter bluetoothAdapter) {
+    public AcceptConnectionTask(Context context, BluetoothAdapter bluetoothAdapter) {
         // Use a temporary object that is later assigned to mmServerSocket
         // because mmServerSocket is final.
         this.context = context;
@@ -38,15 +39,24 @@ public class AcceptThread extends Thread {
         mmServerSocket = tmp;
 
     }
+    // Closes the connect socket and causes the thread to finish.
+    public void cancel() {
+        try {
+            mmServerSocket.close();
+        } catch (IOException e) {
+            Log.e(TAG, "Could not close the connect socket", e);
+        }
+    }
 
-    public void run() {
+    @Override
+    protected Object doInBackground(Object[] objects) {
         BluetoothSocket socket = null;
         // Keep listening until exception occurs or a socket is returned.
         while (true) {
             try {
-                Log.d(AcceptThread.TAG,"Trying to accpet connections...");
+                Log.d(AcceptConnectionTask.TAG,"Trying to accpet connections...");
                 socket = mmServerSocket.accept();
-                Log.d(AcceptThread.TAG,"Accepted Connection");
+                Log.d(AcceptConnectionTask.TAG,"Accepted Connection");
 
             } catch (IOException e) {
                 Log.e(TAG, "Socket's accept() method failed", e);
@@ -54,9 +64,6 @@ public class AcceptThread extends Thread {
             }
 
             if (socket != null) {
-                // A connection was accepted. Perform work associated with
-                // the connection in a separate thread.
-                //manageMyConnectedSocket(socket);
                 SocketHolder.setMODE(1);
                 SocketHolder.setBluetoothSocket(socket);
 
@@ -67,17 +74,9 @@ public class AcceptThread extends Thread {
                 }
                 break;
             } else {
-                Log.d(AcceptThread.TAG,"sokcet object is null");
+                Log.d(AcceptConnectionTask.TAG,"sokcet object is null");
             }
         }
-    }
-
-    // Closes the connect socket and causes the thread to finish.
-    public void cancel() {
-        try {
-            mmServerSocket.close();
-        } catch (IOException e) {
-            Log.e(TAG, "Could not close the connect socket", e);
-        }
+        return null;
     }
 }
