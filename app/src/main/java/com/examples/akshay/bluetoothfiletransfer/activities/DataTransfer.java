@@ -1,4 +1,4 @@
-package com.examples.akshay.bluetoothfiletransfer;
+package com.examples.akshay.bluetoothfiletransfer.activities;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -16,8 +16,12 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.examples.akshay.bluetoothfiletransfer.Constants;
+import com.examples.akshay.bluetoothfiletransfer.Tasks.DataTransferTask;
+import com.examples.akshay.bluetoothfiletransfer.R;
+import com.examples.akshay.bluetoothfiletransfer.SocketHolder;
+
 import static com.examples.akshay.bluetoothfiletransfer.Constants.DATA_TRANSFER_DATA;
-import static com.examples.akshay.bluetoothfiletransfer.Constants.DATA_TRANSFER_SOCKET;
 
 public class DataTransfer extends AppCompatActivity implements View.OnClickListener {
     private final static String TAG = "===DataTransfer";
@@ -26,7 +30,7 @@ public class DataTransfer extends AppCompatActivity implements View.OnClickListe
     BroadcastReceiver broadcastReceiver;
     Button buttonSend;
     IntentFilter intentFilter;
-    DataTransferThread dataTransferThread;
+    DataTransferTask dataTransferTask;
     static Handler handler;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,7 +64,7 @@ public class DataTransfer extends AppCompatActivity implements View.OnClickListe
             }
         });
 
-        //dataTransferThread = DataTransferThread.getInstance(SocketHolder.getBluetoothSocket(),handler);
+        //dataTransferTask = DataTransferTask.getInstance(SocketHolder.getBluetoothSocket(),handler);
 
 
     }
@@ -76,9 +80,9 @@ public class DataTransfer extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onResume() {
         super.onResume();
-        dataTransferThread = new DataTransferThread(SocketHolder.getBluetoothSocket(),handler);
-        if(!(dataTransferThread.getStatus() == AsyncTask.Status.RUNNING)) {
-            dataTransferThread.execute();
+        dataTransferTask = new DataTransferTask(SocketHolder.getBluetoothSocket(),handler);
+        if(!(dataTransferTask.getStatus() == AsyncTask.Status.RUNNING)) {
+            dataTransferTask.execute();
         }
         registerReceiver(broadcastReceiver, intentFilter);
     }
@@ -87,7 +91,7 @@ public class DataTransfer extends AppCompatActivity implements View.OnClickListe
     protected void onPause() {
         super.onPause();
         unregisterReceiver(broadcastReceiver);
-        //dataTransferThread.cancel();
+        //dataTransferTask.cancel();
     }
 
     @Override
@@ -96,9 +100,9 @@ public class DataTransfer extends AppCompatActivity implements View.OnClickListe
             case R.id.activity_data_transfer_button_send:
                 Log.d(DataTransfer.TAG,"Attempting to send data");
                 String toSend = editTextInput.getText().toString();
-                if(dataTransferThread != null) {
+                if(dataTransferTask != null) {
                     toSend = toSend + "";
-                    dataTransferThread.write(toSend.getBytes());
+                    dataTransferTask.write(toSend.getBytes());
                 }
                 break;
             default:

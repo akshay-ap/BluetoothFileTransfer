@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.examples.akshay.bluetoothfiletransfer.Client">
+    tools:context="com.examples.akshay.bluetoothfiletransfer.activities.Client">
 
     <TextView
         android:id="@+id/activity_data_transfer_text_received"

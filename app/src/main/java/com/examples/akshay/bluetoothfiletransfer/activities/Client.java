@@ -1,4 +1,4 @@
-package com.examples.akshay.bluetoothfiletransfer;
+package com.examples.akshay.bluetoothfiletransfer.activities;
 
 import android.Manifest;
 import android.bluetooth.BluetoothAdapter;
@@ -21,6 +21,10 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.examples.akshay.bluetoothfiletransfer.BluetoothDeviceAdapter;
+import com.examples.akshay.bluetoothfiletransfer.Threads.ConnectThread;
+import com.examples.akshay.bluetoothfiletransfer.R;
+
 import java.util.ArrayList;
 import java.util.Set;
 
@@ -39,11 +43,11 @@ public class Client extends AppCompatActivity implements View.OnClickListener{
     Button buttonTransferData;
     RecyclerView recyclerViewPairedDevices;
     RecyclerView recyclerViewScannedDevices;
-    BluetoothDeviceAdapter  bluetoothDeviceAdapterPairedDevices;
+    BluetoothDeviceAdapter bluetoothDeviceAdapterPairedDevices;
     BluetoothDeviceAdapter bluetoothDeviceAdapterScanedDevices;
 
-    ArrayList<CustomBluetoothDevice> arrayListPairedDevices;
-    ArrayList<CustomBluetoothDevice> arrayListScannedDevices = new ArrayList<>();
+    ArrayList<BluetoothDevice> arrayListPairedDevices;
+    ArrayList<BluetoothDevice> arrayListScannedDevices = new ArrayList<>();
 
     BluetoothAdapter mBluetoothAdapter;
 
@@ -80,9 +84,9 @@ public class Client extends AppCompatActivity implements View.OnClickListener{
                     BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                     String deviceName = device.getName();
                     String deviceHardwareAddress = device.getAddress(); // MAC address
-                    CustomBluetoothDevice customBluetoothDevice = new CustomBluetoothDevice(device,deviceName,deviceHardwareAddress);
-                    arrayListScannedDevices.add(customBluetoothDevice);
-                    bluetoothDeviceAdapterScanedDevices.setArrayListCustomBluetoothDevice(arrayListScannedDevices);
+                    //BluetoothDevice customBluetoothDevice = new BluetoothDevice(device,deviceName,deviceHardwareAddress);
+                    arrayListScannedDevices.add(device);
+                    bluetoothDeviceAdapterScanedDevices.setArrayListBluetoothDevice(arrayListScannedDevices);
                     recyclerViewScannedDevices.setAdapter(bluetoothDeviceAdapterScanedDevices);
 
                     Log.d(Client.TAG,"Found device : " + deviceName + " " + deviceHardwareAddress);
@@ -160,7 +164,7 @@ public class Client extends AppCompatActivity implements View.OnClickListener{
             case R.id.activity_client_button_view_paired_devices:
                 Log.d(Client.TAG,"Clicked View Paired Devices");
                 arrayListPairedDevices = getPairedDevices();
-                bluetoothDeviceAdapterPairedDevices.setArrayListCustomBluetoothDevice(arrayListPairedDevices);
+                bluetoothDeviceAdapterPairedDevices.setArrayListBluetoothDevice(arrayListPairedDevices);
                 //bluetoothDeviceAdapterPairedDevices.notifyDataSetChanged();
                 recyclerViewPairedDevices.setAdapter(bluetoothDeviceAdapterPairedDevices);
                 break;
@@ -201,8 +205,8 @@ public class Client extends AppCompatActivity implements View.OnClickListener{
         }
     }
 
-    private ArrayList<CustomBluetoothDevice> getPairedDevices(){
-        ArrayList<CustomBluetoothDevice> bluetoothDeviceArrayList = new ArrayList<>();
+    private ArrayList<BluetoothDevice> getPairedDevices(){
+        ArrayList<BluetoothDevice> bluetoothDeviceArrayList = new ArrayList<>();
         Set<BluetoothDevice> pairedDevices = mBluetoothAdapter.getBondedDevices();
 
         if (pairedDevices.size() > 0) {
@@ -211,8 +215,7 @@ public class Client extends AppCompatActivity implements View.OnClickListener{
 
                 String deviceName = device.getName();
                 String deviceHardwareAddress = device.getAddress(); // MAC address
-                CustomBluetoothDevice customBluetoothDevice = new CustomBluetoothDevice(device,deviceName,deviceHardwareAddress);
-                bluetoothDeviceArrayList.add(customBluetoothDevice);
+                bluetoothDeviceArrayList.add(device);
 
                 Log.d(Client.TAG,"Paired : " + deviceName + " " + deviceHardwareAddress);
             }

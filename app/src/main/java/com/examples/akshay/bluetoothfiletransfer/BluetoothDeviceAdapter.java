@@ -7,7 +7,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
+
+import com.examples.akshay.bluetoothfiletransfer.activities.Client;
 
 import java.util.ArrayList;
 
@@ -17,16 +18,19 @@ import java.util.ArrayList;
 
 public class BluetoothDeviceAdapter extends RecyclerView.Adapter<BluetoothDeviceAdapter.ViewHolder> {
 
-    public ArrayList<CustomBluetoothDevice> getArrayListCustomBluetoothDevice() {
-        return arrayListCustomBluetoothDevice;
+    ArrayList<BluetoothDevice> arrayListBluetoothDevice;
+
+
+    public ArrayList<BluetoothDevice> getArrayListBluetoothDevice() {
+        return arrayListBluetoothDevice;
     }
 
-    public void setArrayListCustomBluetoothDevice(ArrayList<CustomBluetoothDevice> arrayListCustomBluetoothDevice) {
-        this.arrayListCustomBluetoothDevice = arrayListCustomBluetoothDevice;
+    public void setArrayListBluetoothDevice(ArrayList<BluetoothDevice> arrayListBluetoothDevice) {
+        this.arrayListBluetoothDevice = arrayListBluetoothDevice;
     }
 
-    ArrayList<CustomBluetoothDevice> arrayListCustomBluetoothDevice;
     private static final String TAG = "===BluetoothDA";
+
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         private static final String TAG = "===ViewHolder";
@@ -44,14 +48,14 @@ public class BluetoothDeviceAdapter extends RecyclerView.Adapter<BluetoothDevice
         @Override
         public void onClick(View view) {
             Log.d(ViewHolder.TAG,"ViewHolder()...click" + getAdapterPosition());
-            CustomBluetoothDevice x= arrayListCustomBluetoothDevice.get(getAdapterPosition());
-            Client.setBluetoothDeviceSelected(x.getBluetoothDevice());
+            BluetoothDevice bluetoothDevice= arrayListBluetoothDevice.get(getAdapterPosition());
+            Client.setBluetoothDeviceSelected(bluetoothDevice);
         }
     }
 
-    public BluetoothDeviceAdapter(ArrayList<CustomBluetoothDevice> customBluetoothDevice) {
+    public BluetoothDeviceAdapter(ArrayList<BluetoothDevice> bluetoothDevice) {
         Log.d(BluetoothDeviceAdapter.TAG,"BluetoothDeviceAdapter()");
-        this.arrayListCustomBluetoothDevice = customBluetoothDevice;
+        this.arrayListBluetoothDevice = bluetoothDevice;
     }
 
     @Override
@@ -64,13 +68,12 @@ public class BluetoothDeviceAdapter extends RecyclerView.Adapter<BluetoothDevice
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         Log.d(BluetoothDeviceAdapter.TAG,"onBindViewHolder()");
-        CustomBluetoothDevice customBluetoothDevice = arrayListCustomBluetoothDevice.get(position);
-        holder.name.setText(customBluetoothDevice.getName());
+        BluetoothDevice bluetoothDevice = arrayListBluetoothDevice.get(position);
+        holder.name.setText(bluetoothDevice.getName());
     }
 
     @Override
     public int getItemCount() {
-        ///Log.d(BluetoothDeviceAdapter.TAG,"getItemCount() : " + arrayListCustomBluetoothDevice.size());
-        return arrayListCustomBluetoothDevice.size();
+        return arrayListBluetoothDevice.size();
     }
 }

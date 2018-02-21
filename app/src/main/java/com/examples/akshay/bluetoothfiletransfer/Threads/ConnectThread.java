@@ -1,16 +1,16 @@
-package com.examples.akshay.bluetoothfiletransfer;
+package com.examples.akshay.bluetoothfiletransfer.Threads;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.content.Context;
-import android.content.Intent;
 import android.util.Log;
+
+import com.examples.akshay.bluetoothfiletransfer.Constants;
+import com.examples.akshay.bluetoothfiletransfer.SocketHolder;
 
 import java.io.IOException;
 import java.util.UUID;
-
-import static com.examples.akshay.bluetoothfiletransfer.Constants.DATA_TRANSFER_SOCKET;
 
 
 /**
@@ -69,7 +69,7 @@ public class ConnectThread extends Thread {
         SocketHolder.setMODE(0);
         SocketHolder.setBluetoothSocket(mmSocket);
         //DataTransferService dataTransferService = new DataTransferService(mmSocket);
-        //DataTransferThread dataTransferThread = DataTransferThread.getInstance(mmSocket);
+        //DataTransferTask dataTransferThread = DataTransferTask.getInstance(mmSocket);
         //dataTransferThread.run();
 
     }

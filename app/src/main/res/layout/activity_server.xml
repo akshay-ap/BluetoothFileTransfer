@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.examples.akshay.bluetoothfiletransfer.Server">
+    tools:context="com.examples.akshay.bluetoothfiletransfer.activities.Server">
 
     <TextView
         android:id="@+id/activity_server_textview_bluetooth_state_status"

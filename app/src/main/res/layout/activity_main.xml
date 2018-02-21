@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:gravity="center"
-    tools:context="com.examples.akshay.bluetoothfiletransfer.MainActivity">
+    tools:context="com.examples.akshay.bluetoothfiletransfer.activities.MainActivity">
 
     <Button
         android:id="@+id/main_activity_button_client"
