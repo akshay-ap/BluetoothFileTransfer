@@ -24,13 +24,16 @@ public class FileSenderTask extends AsyncTask {
     String filePath;
     BluetoothSocket bluetoothSocket;
     public FileSenderTask(String path) {
-
+    Log.d(FileSenderTask.TAG,"Object created");
     this.bluetoothSocket = SocketHolder.getBluetoothSocket();
     this.filePath = path;
         try {
             this.outputStream = bluetoothSocket.getOutputStream();
+            Log.d(FileSenderTask.TAG,"obtained outputStream");
+
         } catch (IOException e) {
             e.printStackTrace();
+            Log.d(FileSenderTask.TAG,"Failed to obtain outputStream");
             Log.d(FileSenderTask.TAG,e.toString());
         }
     }
@@ -54,10 +57,10 @@ public class FileSenderTask extends AsyncTask {
 
     public void write() {
         try {
-            String path = Environment.getExternalStorageDirectory()+"/"+filePath;
+            //String path = Environment.getExternalStorageDirectory()+"/"+filePath;
 
-            Log.d(FileSenderTask.TAG,"Trying to open : "+ path);
-            File file = new File(path);
+            Log.d(FileSenderTask.TAG,"Trying to open : "+ filePath);
+            File file = new File(filePath);
 
             FileInputStream fileInputStream = new FileInputStream(file);
             if(!file.exists()) {

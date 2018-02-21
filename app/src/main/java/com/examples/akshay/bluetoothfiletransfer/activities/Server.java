@@ -86,6 +86,7 @@ public class Server extends AppCompatActivity implements View.OnClickListener{
 
         buttonAccpet = findViewById(R.id.activity_server_accept_connections);
         buttonAccpet.setOnClickListener(this);
+        buttonAccpet.setVisibility(View.GONE);
 
         buttonDataTransfer = findViewById(R.id.activity_server_transfer_data);
         buttonDataTransfer.setOnClickListener(this);
@@ -107,16 +108,17 @@ public class Server extends AppCompatActivity implements View.OnClickListener{
     }
 
     @Override
-    public void onClick(View view) {
-        switch (view.getId()) {
-            case R.id.activity_server_make_discoverable:
-                Log.d(Server.TAG," Make discoverable click");
-                Intent discoverableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
-                discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, Constants.DISCOVERABLE_DURATION);
-                startActivity(discoverableIntent);
-                break;
-            case R.id.activity_server_accept_connections:
-                //buttonAccpet.setEnabled(false);
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        //For discoverability
+        if(requestCode == Constants.DISCOVERABLE_CODE) {
+            if(resultCode == RESULT_CANCELED ) {
+                Toast.makeText(Server.this,"Cancelled",Toast.LENGTH_SHORT).show();
+                Log.d(Server.TAG,"Cancelled discovery process");
+            } else if(resultCode == Constants.DISCOVERABLE_DURATION ) {
+                Log.d(Server.TAG,"discovery process enabled");
+
                 Log.d(Server.TAG,"accept() click...");
                 if(!alertDialog.isShowing()) {
                     //waitingDialog.setMessage("Accepting connections");
@@ -126,6 +128,22 @@ public class Server extends AppCompatActivity implements View.OnClickListener{
                 }
                 AcceptConnectionTask acceptConnectionTask = new AcceptConnectionTask(this,mBluetoothAdapter);
                 acceptConnectionTask.execute();
+            }
+
+        }
+    }
+
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.activity_server_make_discoverable:
+                Log.d(Server.TAG," Make discoverable click");
+                Intent discoverableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
+                discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, Constants.DISCOVERABLE_DURATION);
+                startActivityForResult(discoverableIntent,Constants.DISCOVERABLE_CODE);
+                break;
+            case R.id.activity_server_accept_connections:
+                //buttonAccpet.setEnabled(false);
 
                 break;
             case R.id.activity_server_transfer_data:
