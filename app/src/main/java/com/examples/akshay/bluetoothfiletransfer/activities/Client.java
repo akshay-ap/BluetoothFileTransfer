@@ -19,7 +19,9 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.examples.akshay.bluetoothfiletransfer.BluetoothDeviceAdapter;
 import com.examples.akshay.bluetoothfiletransfer.Threads.ConnectThread;
@@ -46,6 +48,8 @@ public class Client extends AppCompatActivity implements View.OnClickListener{
     BluetoothDeviceAdapter bluetoothDeviceAdapterPairedDevices;
     BluetoothDeviceAdapter bluetoothDeviceAdapterScanedDevices;
 
+    ProgressBar progressBarScanDevices;
+
     ArrayList<BluetoothDevice> arrayListPairedDevices;
     ArrayList<BluetoothDevice> arrayListScannedDevices = new ArrayList<>();
 
@@ -59,21 +63,28 @@ public class Client extends AppCompatActivity implements View.OnClickListener{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_client);
-        setupUI();
 
-        bluetoothDeviceSelected = null;
+        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+
+        setupUI();
+        setState();
+
         arrayListPairedDevices = new ArrayList<>();
         arrayListScannedDevices = new ArrayList<>();
 
-        bluetoothDeviceAdapterPairedDevices = new BluetoothDeviceAdapter(arrayListPairedDevices);
-        bluetoothDeviceAdapterScanedDevices = new BluetoothDeviceAdapter(arrayListScannedDevices);
+        bluetoothDeviceAdapterPairedDevices = new BluetoothDeviceAdapter(arrayListPairedDevices,this);
+        bluetoothDeviceAdapterScanedDevices = new BluetoothDeviceAdapter(arrayListScannedDevices,this);
 
         filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
+        filter.addAction(BluetoothDevice.ACTION_ACL_DISCONNECTED);
+        filter.addAction(BluetoothDevice.ACTION_ACL_CONNECTED);
+        filter.addAction(BluetoothDevice.ACTION_ACL_DISCONNECT_REQUESTED);
+
+        filter.addAction(BluetoothAdapter.ACTION_STATE_CHANGED);
         filter.addAction(BluetoothAdapter.ACTION_DISCOVERY_STARTED);
         filter.addAction(BluetoothAdapter.ACTION_CONNECTION_STATE_CHANGED);
         filter.addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
 
-        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         mReceiver = new BroadcastReceiver() {
             public void onReceive(Context context, Intent intent) {
                 String action = intent.getAction();
@@ -90,12 +101,34 @@ public class Client extends AppCompatActivity implements View.OnClickListener{
                     recyclerViewScannedDevices.setAdapter(bluetoothDeviceAdapterScanedDevices);
 
                     Log.d(Client.TAG,"Found device : " + deviceName + " " + deviceHardwareAddress);
+                } else if (BluetoothDevice.ACTION_ACL_DISCONNECTED.equals(action)) {
+                    Log.d(Client.TAG,"ACTION_ACL_DISCONNECTED");
+                    buttonTransferData.setEnabled(false);
+
+                } else if (BluetoothDevice.ACTION_ACL_CONNECTED.equals(action)) {
+                    Log.d(Client.TAG,"ACTION_ACL_CONNECTED");
+                    buttonTransferData.setEnabled(true);
+
+                } else if (BluetoothDevice.ACTION_ACL_DISCONNECT_REQUESTED.equals(action)) {
+                    Log.d(Client.TAG,"ACTION_ACL_DISCONNECT_REQUESTED");
+
                 } else if (BluetoothAdapter.ACTION_DISCOVERY_STARTED.equals(action)) {
                     Log.d(Client.TAG,"ACTION_DISCOVERY_STARTED");
+                    buttonStartScanDevices.setEnabled(false);
+                    buttonStopScanDevices.setEnabled(true);
+                    progressBarScanDevices.setVisibility(View.VISIBLE);
+
                 } else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
+                    progressBarScanDevices.setVisibility(View.GONE);
+                    buttonStartScanDevices.setEnabled(true);
+                    buttonStopScanDevices.setEnabled(false);
+
                     Log.d(Client.TAG,"ACTION_DISCOVERY_FINISHED");
                 } else if(BluetoothAdapter.ACTION_CONNECTION_STATE_CHANGED.equals(action)) {
                     Log.d(Client.TAG,"Connection State Changed");
+                } else if (BluetoothAdapter.ACTION_STATE_CHANGED.equals(action)) {
+                    Log.d(Client.TAG,"Adapter State Changed");
+                    setState();
                 }
             }
         };
@@ -110,11 +143,9 @@ public class Client extends AppCompatActivity implements View.OnClickListener{
         if (!mBluetoothAdapter.isEnabled()) {
             Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
-            textViewBluetoothState.setText(R.string.STATE_OFF);
             Log.d(TAG, "OFF");
 
         } else {
-            textViewBluetoothState.setText(R.string.STATE_ON);
             Log.d(TAG, "ON");
         }
     }
@@ -140,6 +171,7 @@ public class Client extends AppCompatActivity implements View.OnClickListener{
 
         buttonTransferData = findViewById(R.id.activity_client_transfer_data);
         buttonTransferData.setOnClickListener(this);
+        buttonTransferData.setEnabled(false);
 
         RecyclerView.LayoutManager layoutManagerPairedDevices = new LinearLayoutManager(getApplicationContext());
         RecyclerView.LayoutManager layoutManagerScannedDevices = new LinearLayoutManager(getApplicationContext());
@@ -155,6 +187,10 @@ public class Client extends AppCompatActivity implements View.OnClickListener{
         recyclerViewScannedDevices.setLayoutManager(layoutManagerScannedDevices);
         recyclerViewScannedDevices.setItemAnimator(new DefaultItemAnimator());
         recyclerViewScannedDevices.setAdapter(bluetoothDeviceAdapterScanedDevices);
+
+
+        progressBarScanDevices = findViewById(R.id.acitivity_client_progressBar_scan_devices);
+        progressBarScanDevices.setVisibility(View.GONE);
 
     }
 
@@ -259,9 +295,49 @@ public class Client extends AppCompatActivity implements View.OnClickListener{
         return bluetoothDeviceSelected;
     }
 
-    public static void setBluetoothDeviceSelected(BluetoothDevice bluetoothDeviceSelected) {
-        //Toast.makeText(,"Selected device",Toast.LENGTH_SHORT).show();
+    public static void setBluetoothDeviceSelected(BluetoothDevice bluetoothDeviceSelected,Context context) {
         Client.bluetoothDeviceSelected = bluetoothDeviceSelected;
+        Toast.makeText(context,"Device selected : " + bluetoothDeviceSelected.getName(),Toast.LENGTH_SHORT).show();
     }
+
+    public void setState() {
+        int state = mBluetoothAdapter.getState();
+        switch (state) {
+            case BluetoothAdapter.STATE_OFF:
+                textViewBluetoothState.setText(R.string.STATE_OFF);
+                buttonStartScanDevices.setEnabled(false);
+                buttonStopScanDevices.setEnabled(false);
+                break;
+            case BluetoothAdapter.STATE_TURNING_ON:
+                textViewBluetoothState.setText(R.string.STATE_TURNING_ON);
+                break;
+            case BluetoothAdapter.STATE_ON:
+                textViewBluetoothState.setText(R.string.STATE_ON);
+                buttonStartScanDevices.setEnabled(true);
+                buttonStopScanDevices.setEnabled(false);
+                break;
+            case BluetoothAdapter.STATE_TURNING_OFF:
+                if(mBluetoothAdapter.isDiscovering()) {
+                    Log.d(Client.TAG,"Cancelling discovery");
+                    mBluetoothAdapter.cancelDiscovery();
+
+                }
+                textViewBluetoothState.setText(R.string.STATE_TURNING_OFF);
+
+                break;
+            default:
+                textViewBluetoothState.setText(R.string.unknown);
+                break;
+        }
+
+        if(mBluetoothAdapter.isDiscovering()) {
+            buttonStartScanDevices.setEnabled(false);
+            buttonStopScanDevices.setEnabled(true);
+        } else {
+            buttonStartScanDevices.setEnabled(true);
+            buttonStopScanDevices.setEnabled(false);
+        }
+    }
+
 
 }
