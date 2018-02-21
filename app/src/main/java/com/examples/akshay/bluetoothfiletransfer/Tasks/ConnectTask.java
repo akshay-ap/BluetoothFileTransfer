@@ -1,4 +1,4 @@
-package com.examples.akshay.bluetoothfiletransfer.Threads;
+package com.examples.akshay.bluetoothfiletransfer.Tasks;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -19,13 +19,13 @@ import java.util.UUID;
  *
  */
 
-public class ConnectThread extends AsyncTask {
-    private static final String TAG = "===ConnectThread";
+public class ConnectTask extends AsyncTask {
+    private static final String TAG = "===ConnectTask";
     private final BluetoothSocket mmSocket;
     private final BluetoothDevice mmDevice;
     private BluetoothAdapter mBluetoothAdapter;
     private Context context;
-    public ConnectThread(Context context,BluetoothDevice device, BluetoothAdapter bluetoothAdapter) {
+    public ConnectTask(Context context,BluetoothDevice device, BluetoothAdapter bluetoothAdapter) {
         // Use a temporary object that is later assigned to mmSocket
         // because mmSocket is final.
         BluetoothSocket tmp = null;
@@ -54,9 +54,9 @@ public class ConnectThread extends AsyncTask {
         try {
             // Connect to the remote device through the socket. This call blocks
             // until it succeeds or throws an exception.
-            Log.d(ConnectThread.TAG,"Trying to connect to server...");
+            Log.d(ConnectTask.TAG,"Trying to connect to server...");
             mmSocket.connect();
-            Log.d(ConnectThread.TAG, "Connected...");
+            Log.d(ConnectTask.TAG, "Connected...");
         } catch (IOException connectException) {
             // Unable to connect; close the socket and return.
             try {

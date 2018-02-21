@@ -27,7 +27,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.examples.akshay.bluetoothfiletransfer.BluetoothDeviceAdapter;
-import com.examples.akshay.bluetoothfiletransfer.Threads.ConnectThread;
+import com.examples.akshay.bluetoothfiletransfer.Tasks.ConnectTask;
 import com.examples.akshay.bluetoothfiletransfer.R;
 import com.examples.akshay.bluetoothfiletransfer.Utils;
 
@@ -264,7 +264,7 @@ public class Client extends AppCompatActivity implements View.OnClickListener{
                     Log.d(Client.TAG,"bluetoothDeviceSelected is null");
                     return;
                 }
-                ConnectThread connectThread = new ConnectThread(this,bluetoothDeviceSelected,mBluetoothAdapter);
+                ConnectTask connectThread = new ConnectTask(this,bluetoothDeviceSelected,mBluetoothAdapter);
                 connectThread.execute();
                 break;
 
