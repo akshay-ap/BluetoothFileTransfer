@@ -80,9 +80,10 @@ public class FileReceiverTask extends AsyncTask {
             //output.flush();
             output.close();
             Log.d(FileReceiverTask.TAG,"OutputStream of File closed");
+            Log.d(FileReceiverTask.TAG,"Closing inputStream...");
 
-            //inputStream.close();
-            //Log.d(FileReceiverTask.TAG,"inputStream closed");
+            inputStream.close();
+            Log.d(FileReceiverTask.TAG,"inputStream closed");
 
         } catch (IOException e) {
             e.printStackTrace();
