@@ -24,6 +24,7 @@
         android:layout_height="wrap_content"
         android:text="@string/make_discoverable"/>
 
+
     <Button
         android:id="@+id/activity_server_accept_connections"
         android:layout_width="match_parent"

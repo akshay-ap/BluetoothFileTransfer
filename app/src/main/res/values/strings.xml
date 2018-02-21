@@ -25,4 +25,8 @@
     <string name="send">SEND</string>
     <string name="device_connected">Device connected</string>
     <string name="device_disconnected">Device Disconnected</string>
+    <string name="test">test</string>
+    <string name="enter_file_name_here">Enter file name here</string>
+    <string name="test1">test1</string>
+    <string name="test2">test2</string>
 </resources>

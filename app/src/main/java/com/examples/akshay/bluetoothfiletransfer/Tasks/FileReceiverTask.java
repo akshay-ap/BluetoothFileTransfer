@@ -9,7 +9,7 @@ import android.os.AsyncTask;
 
 public class FileReceiverTask extends AsyncTask {
 
-    public FileReceiverTask(String name, BluetoothSocket socket) {
+    public FileReceiverTask(String name) {
 
     }
 
