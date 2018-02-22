@@ -30,18 +30,14 @@ import static com.examples.akshay.bluetoothfiletransfer.Constants.DATA_TRANSFER_
 
 public class DataTransfer extends AppCompatActivity implements View.OnClickListener {
     private final static String TAG = "===DataTransfer";
-    EditText editTextInput;
-    EditText editTextFileInput;
-    TextView textViewDataReceived;
+
+
     BroadcastReceiver broadcastReceiver;
-    Button buttonSend;
     Button buttonTest1;
     Button buttonTest2;
     FileReceiverTask fileReceiverTask;
     IntentFilter intentFilter;
-    //DataTransferTask dataTransferTask;
     FileSenderTask fileSenderTask;
-    static Handler handler;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,18 +51,6 @@ public class DataTransfer extends AppCompatActivity implements View.OnClickListe
     }
 
     private void setupUI() {
-        editTextInput = findViewById(R.id.activity_data_transfer_edittext_input);
-        editTextInput.setVisibility(View.GONE);
-
-        editTextFileInput = findViewById(R.id.activity_data_transfer_edittext_file_input);
-        editTextFileInput.setVisibility(View.GONE);
-
-        textViewDataReceived = findViewById(R.id.activity_data_transfer_text_received);
-        textViewDataReceived.setVisibility(View.GONE);
-
-        buttonSend = findViewById(R.id.activity_data_transfer_button_send);
-        buttonSend.setOnClickListener(this);
-        buttonSend.setVisibility(View.GONE);
 
         buttonTest1 = findViewById(R.id.activity_data_transfer_test_1);
         buttonTest1.setOnClickListener(this);
@@ -79,25 +63,6 @@ public class DataTransfer extends AppCompatActivity implements View.OnClickListe
     protected void onResume() {
         super.onResume();
 
-        handler = new Handler(new Handler.Callback() {
-            @Override
-            public boolean handleMessage(Message message) {
-                final String text = (String)message.obj;
-                Log.d(DataTransfer.TAG,text);
-                Toast.makeText(getApplicationContext(),text,Toast.LENGTH_SHORT).show();
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        textViewDataReceived.setText(text);
-                    }
-                });
-                return false;
-            }
-        });
-        //dataTransferTask = new DataTransferTask(SocketHolder.getBluetoothSocket(),handler);
-        //if(!(dataTransferTask.getStatus() == AsyncTask.Status.RUNNING)) {
-        //    dataTransferTask.execute();
-        //}
         registerReceiver(broadcastReceiver, intentFilter);
     }
 
@@ -105,20 +70,11 @@ public class DataTransfer extends AppCompatActivity implements View.OnClickListe
     protected void onPause() {
         super.onPause();
         unregisterReceiver(broadcastReceiver);
-        //dataTransferTask.cancel();
     }
 
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
-            case R.id.activity_data_transfer_button_send:
-                Log.d(DataTransfer.TAG,"Attempting to send data");
-                String toSend = editTextInput.getText().toString();
-//                if(dataTransferTask != null) {
-//                    toSend = toSend + "";
-//                    dataTransferTask.write(toSend.getBytes());
-//                }
-                break;
             case R.id.activity_data_transfer_test_1:
 
                 if(fileReceiverTask == null || fileReceiverTask.getStatus() == AsyncTask.Status.FINISHED) {
@@ -161,9 +117,6 @@ public class DataTransfer extends AppCompatActivity implements View.OnClickListe
             @Override
             public void onReceive(Context context, Intent intent) {
                 Log.d(DataTransfer.TAG,"broadCastReceived...");
-                String data = intent.getStringExtra(DATA_TRANSFER_DATA);
-                textViewDataReceived.setText(data);
-
             }
         };
     }
