@@ -44,8 +44,16 @@ public class AcceptConnectionTask extends AsyncTask {
         try {
             mmServerSocket.close();
         } catch (IOException e) {
-            Log.e(TAG, "Could not close the connect socket", e);
+            Log.d(TAG, "Could not close the connect socket", e);
         }
+    }
+
+    @Override
+    protected void onPostExecute(Object o) {
+
+        Log.e(TAG, "onPostExecute()");
+
+        super.onPostExecute(o);
     }
 
     @Override

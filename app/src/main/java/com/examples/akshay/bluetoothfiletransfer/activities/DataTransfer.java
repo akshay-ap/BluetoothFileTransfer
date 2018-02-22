@@ -133,11 +133,9 @@ public class DataTransfer extends AppCompatActivity implements View.OnClickListe
                     Log.d(DataTransfer.TAG,"Failed to close socket...");
                     Log.d(DataTransfer.TAG,e.toString());
                 }*/
-                String receivePath = String.valueOf(Environment.getExternalStorageDirectory());
-                receivePath = receivePath+"/odk/forms/temp.xml";
-                Log.d(DataTransfer.TAG,"Write path : " + receivePath);
+
                 if(fileReceiverTask == null || fileReceiverTask.getStatus() == AsyncTask.Status.FINISHED) {
-                    fileReceiverTask = new FileReceiverTask(receivePath);
+                    fileReceiverTask = new FileReceiverTask();
                     fileReceiverTask.execute();
                 } else {
                     Toast.makeText(DataTransfer.this,"Already running another task",Toast.LENGTH_SHORT).show();

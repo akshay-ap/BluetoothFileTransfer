@@ -2,18 +2,24 @@ package com.examples.akshay.bluetoothfiletransfer.Tasks;
 
 import android.bluetooth.BluetoothSocket;
 import android.os.AsyncTask;
+import android.os.Environment;
 import android.util.Log;
 
+import com.examples.akshay.bluetoothfiletransfer.MetaData;
 import com.examples.akshay.bluetoothfiletransfer.SocketHolder;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.ObjectInputStream;
 import java.io.OutputStream;
 
 /**
  * Created by ash on 21/2/18.
+ * Make sure to instantiate only one instance of this class.
+ * Assume Socket connection is established over bluetooth.
  */
 
 public class FileReceiverTask extends AsyncTask {
@@ -21,10 +27,9 @@ public class FileReceiverTask extends AsyncTask {
     private static final String TAG = "===FileReceiverTask";
 
     InputStream inputStream;
-    String filePath;
-    public FileReceiverTask(String name) {
+    //String filePath;
+    public FileReceiverTask() {
         Log.d(FileReceiverTask.TAG,"Object created");
-        this.filePath = name;
 
         try {
 
@@ -41,55 +46,65 @@ public class FileReceiverTask extends AsyncTask {
 
     @Override
     protected Object doInBackground(Object[] objects) {
-        try {
-        File file = new File(filePath);
-        if(!file.exists()) {
-            Log.d(FileReceiverTask.TAG,"File does not exist : " + filePath);
-            Log.d(FileReceiverTask.TAG,"Trying to create file: " + filePath);
-            /*if(file.createNewFile()) {
-                //File creation successful
-                Log.d(FileReceiverTask.TAG,"File creation successsful");
-            } else {
-                //File creation failed
-                Log.d(FileReceiverTask.TAG,"File creation failed");
-                return null;
-            }*/
 
-        } else {
-            Log.d(FileReceiverTask.TAG,"File already exists : " + filePath);
+        if(!SocketHolder.getBluetoothSocket().isConnected()) {
+            Log.d(FileReceiverTask.TAG,"Socket is closed... Can't perform file receiving Task...");
+            return null;
         }
 
-            Log.d(FileReceiverTask.TAG,"Getting OutputStream : ");
+        try {
+            ObjectInputStream objectInputStream = new ObjectInputStream(inputStream);
+            MetaData metaData = (MetaData)objectInputStream.readObject();
+            Log.d(FileReceiverTask.TAG," Variable value received : " + metaData.toString() );
+            //objectInputStream.close();
 
-            OutputStream output = new FileOutputStream(file);
-            Log.d(FileReceiverTask.TAG,"outputStream for file created : ");
+            String receivePath = String.valueOf(Environment.getExternalStorageDirectory()) +"/"+ metaData.getFname();
+
+            File file = new File(receivePath);
+            if(!file.exists()) {
+                Log.d(FileReceiverTask.TAG, "File does not exist : " + receivePath);
+            }  else {
+                Log.d(FileReceiverTask.TAG,"File already exists : " + receivePath);
+            }
+
+            OutputStream outputStreamWriteToFile = new FileOutputStream(file);
+            Log.d(FileReceiverTask.TAG,"outputStreamWriteToFile created");
 
             byte[] buffer = new byte[1024];
             int read;
+            int totalRead = 0;
             int loop = 0;
-            while ((read = inputStream.read(buffer)) != -1) {
-                output.write(buffer,0,read);
-                loop++;
-                //Log.d(FileReceiverTask.TAG,"in loop");
-
+            if(! SocketHolder.getBluetoothSocket().isConnected()) {
+                Log.d(FileReceiverTask.TAG,"Socket is closed... Can't perform file receiving from stream...");
+                return null;
             }
-            Log.d(FileReceiverTask.TAG,"Loop iterations run : " + loop);
+            while ((read = inputStream.read(buffer)) != -1) {
 
-            Log.d(FileReceiverTask.TAG,"OutputStream of File closing");
+                totalRead = totalRead + read;
+                outputStreamWriteToFile.write(buffer,0,read);
+                loop++;
+                Log.d(FileReceiverTask.TAG,"loop iterations : " + loop + " bytes read: " + totalRead);
 
-            //output.flush();
-            output.close();
-            Log.d(FileReceiverTask.TAG,"OutputStream of File closed");
-            Log.d(FileReceiverTask.TAG,"Closing inputStream...");
+                //This the most important part...
+                if(totalRead == metaData.getDataSize()) {
+                    Log.d(FileReceiverTask.TAG,"breaking from loop");
+                    break;
+                }
+            }
 
-            inputStream.close();
-            Log.d(FileReceiverTask.TAG,"inputStream closed");
+            Log.d(FileReceiverTask.TAG,"loop iterations : " + loop + " bytes read: " + totalRead);
+            Log.d(FileReceiverTask.TAG,"outputStreamWriteToFile closing");
+            outputStreamWriteToFile.close();
+            Log.d(FileReceiverTask.TAG,"outputStreamWriteToFile closed");
 
         } catch (IOException e) {
             e.printStackTrace();
+            Log.d(FileReceiverTask.TAG,e.toString() );
+
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+            Log.d(FileReceiverTask.TAG,e.toString() );
         }
-
-
 
         return null;
     }
@@ -97,6 +112,13 @@ public class FileReceiverTask extends AsyncTask {
     @Override
     protected void onPostExecute(Object o) {
         super.onPostExecute(o);
+
+        if(SocketHolder.getBluetoothSocket().isConnected()) {
+            Log.d(FileReceiverTask.TAG,"BluetoothSocket is connected");
+
+        } else {
+            Log.d(FileReceiverTask.TAG,"BluetoothSocket is ****NOT*** connected");
+        }
         Log.d(FileReceiverTask.TAG,"Task execution completed");
 
     }

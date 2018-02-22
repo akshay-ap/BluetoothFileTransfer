@@ -62,7 +62,7 @@ public class ConnectTask extends AsyncTask {
             try {
                 mmSocket.close();
             } catch (IOException closeException) {
-                Log.e(TAG, "Could not close the client socket", closeException);
+                Log.d(TAG, "Could not close the client socket", closeException);
             }
             return null;
         }
@@ -71,6 +71,13 @@ public class ConnectTask extends AsyncTask {
         SocketHolder.setBluetoothSocket(mmSocket);
 
         return null;
+    }
+
+    @Override
+    protected void onPostExecute(Object o) {
+        super.onPostExecute(o);
+        Log.e(TAG, "onPostExecute()");
+
     }
 
     // Closes the client socket and causes the thread to finish.

@@ -53,6 +53,11 @@ public class Server extends AppCompatActivity implements View.OnClickListener{
         intentFilter.addAction(BluetoothDevice.ACTION_ACL_DISCONNECTED);
         intentFilter.addAction(BluetoothAdapter.ACTION_STATE_CHANGED);
         intentFilter.addAction(BluetoothAdapter.ACTION_SCAN_MODE_CHANGED);
+
+
+        Intent discoverableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
+        discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, Constants.DISCOVERABLE_DURATION);
+        startActivityForResult(discoverableIntent,Constants.DISCOVERABLE_CODE);
     }
 
     @Override
@@ -178,9 +183,15 @@ public class Server extends AppCompatActivity implements View.OnClickListener{
                     ArrayList<BluetoothDevice> Connecteddevices = Utils.getPairedDevices(mBluetoothAdapter);
                     for (BluetoothDevice d : Connecteddevices) {
                         Log.d(Server.TAG,d.getName() + " " + d.getAddress() + " " + d.getBondState());
+
                     }
 
                     Toast.makeText(Server.this,R.string.device_connected,Toast.LENGTH_SHORT).show();
+
+                    //Automate stuff
+                    Log.d(Server.TAG," click transfer data");
+                    Intent startDatatransfer = new Intent(Server.this,DataTransfer.class);
+                    startActivity(startDatatransfer);
 
                 } else if (BluetoothDevice.ACTION_ACL_DISCONNECTED.equals(action)) {
                     Log.d(Server.TAG,"BluetoothDevice.ACTION_ACL_DISCONNECTED");

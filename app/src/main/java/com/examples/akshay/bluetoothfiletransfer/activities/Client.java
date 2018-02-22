@@ -127,6 +127,11 @@ public class Client extends AppCompatActivity implements View.OnClickListener{
                     Toast.makeText(Client.this, R.string.device_connected,Toast.LENGTH_SHORT).show();
                     buttonTransferData.setEnabled(true);
 
+                    //Automate Stuff
+                    Log.d(Client.TAG," click transfer data");
+                    Intent startDataTransfer = new Intent(Client.this,DataTransfer.class);
+                    startActivity(startDataTransfer);
+
                 } else if (BluetoothDevice.ACTION_ACL_DISCONNECT_REQUESTED.equals(action)) {
                     Log.d(Client.TAG,"ACTION_ACL_DISCONNECT_REQUESTED");
 
@@ -151,6 +156,13 @@ public class Client extends AppCompatActivity implements View.OnClickListener{
             }
         };
         checkLocationPermission();
+
+
+        arrayListScannedDevices.clear();
+        bluetoothDeviceSelected = null;
+        Log.d(Client.TAG,"Attempting Scan start from onCreate()...");
+        mBluetoothAdapter.startDiscovery();
+
     }
 
     @Override
