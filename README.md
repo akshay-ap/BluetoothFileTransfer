@@ -5,26 +5,22 @@ How to use:
 2. From Main menu choose `SERVER` option on one device and `CLIENT` in another.
 
 
-
 FOR `SERVER` :
-1. Click `MAKE DISCOVERABLE`.
-2. Click `ACCEPT`.
+1. Grant permissions if asked.
+1. Click `SERVER` button form main screen.
+3. A prompt will appear to make device discoverable. Click `Allow` button.
+4. Wait for client device to connect.
 
 For `CLIENT` :
-1. Click `SCAN`.
-    A list of available devices will be shown.
+1. Grant permissions if asked.
+1. Click `CLIENT` button form main screen.
 2. Choose the device you want to connet to. (Click on name of device).
-3. Click `CONNECT` (Make sure you have click `ACCEPT` on other device before doing this step).
+3. Click `CONNECT`.
 
-After `ACCPET` button becomes clickable, click `TRANSFER DATA` on both devices.
+If connection is successful, a screen with `RECEIVE` and `SEND` button will appear. 
 
 
+Server -> Client
 
-Main Activity<br>
-<img src="screenShots/1.png" width= 30%>
+<img src="screenShots/moto.gif" width= 30%>    <img src="screenShots/asus.gif" width= 30%>
 
-Server<br>
-<img src="screenShots/server.png" width= 30%>
-
-Client<br>
-<img src="screenShots/client.png" width= 30%>

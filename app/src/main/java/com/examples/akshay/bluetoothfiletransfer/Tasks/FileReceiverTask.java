@@ -29,6 +29,7 @@ public class FileReceiverTask extends AsyncTask {
 
     InputStream inputStream;
     TaskUpdate taskUpdate;
+    MetaData metaData;
     //String filePath;
     public FileReceiverTask(TaskUpdate taskUpdate) {
         Log.d(FileReceiverTask.TAG,"Object created");
@@ -56,7 +57,7 @@ public class FileReceiverTask extends AsyncTask {
 
         try {
             ObjectInputStream objectInputStream = new ObjectInputStream(inputStream);
-            MetaData metaData = (MetaData)objectInputStream.readObject();
+            metaData = (MetaData)objectInputStream.readObject();
             Log.d(FileReceiverTask.TAG," Variable value received : " + metaData.toString() );
             //objectInputStream.close();
 
@@ -118,7 +119,7 @@ public class FileReceiverTask extends AsyncTask {
     @Override
     protected void onPostExecute(Object o) {
         super.onPostExecute(o);
-        taskUpdate.TaskCompleted();
+        taskUpdate.TaskCompleted(metaData.getFname());
         if(SocketHolder.getBluetoothSocket().isConnected()) {
             Log.d(FileReceiverTask.TAG,"BluetoothSocket is connected");
 

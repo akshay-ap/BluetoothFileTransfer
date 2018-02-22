@@ -44,7 +44,7 @@ public class DataTransfer extends AppCompatActivity implements View.OnClickListe
     IntentFilter intentFilter;
     FileSenderTask fileSenderTask;
     String toDisplay;
-
+    boolean state;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -86,6 +86,7 @@ public class DataTransfer extends AppCompatActivity implements View.OnClickListe
         switch (view.getId()) {
             case R.id.activity_data_transfer_test_1:
                 toDisplay = "Received : ";
+                state = false;
                 if(fileReceiverTask == null || fileReceiverTask.getStatus() == AsyncTask.Status.FINISHED) {
                     fileReceiverTask = new FileReceiverTask(DataTransfer.this);
                     fileReceiverTask.execute();
@@ -96,7 +97,8 @@ public class DataTransfer extends AppCompatActivity implements View.OnClickListe
 
                 break;
             case R.id.activity_data_transfer_test_2:
-                toDisplay = "Sent : ";
+                toDisplay = "Sent    : ";
+                state = true;
 
                 String path = String.valueOf(Environment.getExternalStorageDirectory());
                 new ChooserDialog().with(this)
@@ -133,7 +135,7 @@ public class DataTransfer extends AppCompatActivity implements View.OnClickListe
     }
 
     @Override
-    public void TaskCompleted() {
+    public void TaskCompleted(final String message) {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -141,9 +143,16 @@ public class DataTransfer extends AppCompatActivity implements View.OnClickListe
                 if(alertDialog.isShowing()) {
                     alertDialog.dismiss();
                 }
+                String toShow;
+                if (state) {
+                    toShow = "File sent : "+ message;
+                }
+                else {
+                    toShow = "File received : "+ message;
+                }
+                Toast.makeText(DataTransfer.this,message,Toast.LENGTH_SHORT).show();
             }
         });
-
     }
 
     @Override
@@ -153,9 +162,17 @@ public class DataTransfer extends AppCompatActivity implements View.OnClickListe
             @Override
             public void run() {
                 Log.d(DataTransfer.TAG,"TaskStarted()");
+                String toShow;
+                if (state) {
+                    toShow = "Waiting for receiver...";
+                }
+                else {
+                    toShow = "Waiting for sender...";
+                }
 
                 if(!alertDialog.isShowing()) {
                     alertDialog= getAlertDialog();
+                    alertDialog.setMessage(toShow);
                     alertDialog.show();
                 }
             }

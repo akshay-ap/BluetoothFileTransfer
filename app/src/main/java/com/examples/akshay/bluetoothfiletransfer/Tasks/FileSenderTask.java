@@ -32,7 +32,7 @@ public class FileSenderTask extends AsyncTask {
     String filePath;
     BluetoothSocket bluetoothSocket;
     TaskUpdate taskUpdate;
-
+    MetaData metaData;
     public FileSenderTask(String path, TaskUpdate taskUpdate) {
 
     Log.d(FileSenderTask.TAG,"Object created");
@@ -75,7 +75,7 @@ public class FileSenderTask extends AsyncTask {
             ObjectOutputStream objectOutputStream;
             objectOutputStream = new ObjectOutputStream(outputStream);
 
-            MetaData metaData = new MetaData(file.length(),file.getName());
+            metaData = new MetaData(file.length(),file.getName());
             Log.d(FileSenderTask.TAG,"Trying to send : " + metaData.toString());
             objectOutputStream.writeObject(metaData);
 
@@ -120,7 +120,7 @@ public class FileSenderTask extends AsyncTask {
     @Override
     protected void onPostExecute(Object o) {
         super.onPostExecute(o);
-        taskUpdate.TaskCompleted();
+        taskUpdate.TaskCompleted(metaData.getFname());
 
         if(SocketHolder.getBluetoothSocket().isConnected()) {
             Log.d(FileSenderTask.TAG,"BluetoothSocket is connected");

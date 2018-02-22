@@ -34,8 +34,6 @@ import com.examples.akshay.bluetoothfiletransfer.Utils;
 import java.util.ArrayList;
 import java.util.Set;
 
-import static android.content.pm.PackageManager.PERMISSION_GRANTED;
-import static com.examples.akshay.bluetoothfiletransfer.Constants.PERMISSIONS_REQUEST_LOCATION;
 import static com.examples.akshay.bluetoothfiletransfer.Constants.REQUEST_ENABLE_BT;
 
 public class Client extends AppCompatActivity implements View.OnClickListener{
@@ -155,7 +153,6 @@ public class Client extends AppCompatActivity implements View.OnClickListener{
                 }
             }
         };
-        checkLocationPermission();
 
 
         arrayListScannedDevices.clear();
@@ -306,38 +303,6 @@ public class Client extends AppCompatActivity implements View.OnClickListener{
             }
         }
         return bluetoothDeviceArrayList;
-    }
-
-    public void checkLocationPermission() {
-        // Here, thisActivity is the current activity
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PERMISSION_GRANTED) {
-                buttonStopScanDevices.setEnabled(false);
-                buttonStartScanDevices.setEnabled(false);
-                buttonViewPairedDevices.setEnabled(false);
-                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},PERMISSIONS_REQUEST_LOCATION);
-                Log.d(Client.TAG,"Requesting location permission");
-        } else {
-            Log.d(Client.TAG,"Location permission granted");
-        }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-
-        if(requestCode == PERMISSIONS_REQUEST_LOCATION) {
-            if(grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED ) {
-                Log.d(Client.TAG,"PERMISSION_GRANTED");
-                buttonStopScanDevices.setEnabled(true);
-                buttonStartScanDevices.setEnabled(true);
-                buttonViewPairedDevices.setEnabled(true);
-            } else {
-                Log.d(Client.TAG,"PERMISSION_DENIED");
-                buttonStopScanDevices.setEnabled(false);
-                buttonStartScanDevices.setEnabled(false);
-                buttonViewPairedDevices.setEnabled(false);
-            }
-        }
     }
 
     public static BluetoothDevice getBluetoothDeviceSelected() {

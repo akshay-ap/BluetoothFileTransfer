@@ -5,7 +5,7 @@ package com.examples.akshay.bluetoothfiletransfer.interfaces;
  */
 
 public interface TaskUpdate {
-    void TaskCompleted();
+    void TaskCompleted(String message);
     void TaskStarted();
     void TaskProgressPublish(long Update);
 }
