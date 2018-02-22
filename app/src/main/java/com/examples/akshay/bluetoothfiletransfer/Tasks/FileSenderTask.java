@@ -8,6 +8,7 @@ import android.webkit.WebView;
 
 import com.examples.akshay.bluetoothfiletransfer.MetaData;
 import com.examples.akshay.bluetoothfiletransfer.SocketHolder;
+import com.examples.akshay.bluetoothfiletransfer.interfaces.TaskUpdate;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -30,10 +31,12 @@ public class FileSenderTask extends AsyncTask {
     OutputStream outputStream;
     String filePath;
     BluetoothSocket bluetoothSocket;
+    TaskUpdate taskUpdate;
 
-    public FileSenderTask(String path) {
+    public FileSenderTask(String path, TaskUpdate taskUpdate) {
+
     Log.d(FileSenderTask.TAG,"Object created");
-
+    this.taskUpdate = taskUpdate;
 
     this.bluetoothSocket = SocketHolder.getBluetoothSocket();
     this.filePath = path;
@@ -50,7 +53,7 @@ public class FileSenderTask extends AsyncTask {
 
     @Override
     protected Object doInBackground(Object[] objects) {
-
+        taskUpdate.TaskStarted();
         if(!SocketHolder.getBluetoothSocket().isConnected()) {
             Log.d(FileSenderTask.TAG,"Socket is closed... Can't perform file sending Task...");
             return null;
@@ -88,10 +91,16 @@ public class FileSenderTask extends AsyncTask {
             int bytesRead = 0;
             byte[] buffer = new byte[1024];
             int loop = 0;
+            long totalRead = 0;
+            long toRead = metaData.getDataSize();
             while ((bytesRead = fileInputStream.read(buffer)) > 0)
             {
                 loop++;
                 outputStream.write(buffer, 0, bytesRead);
+                totalRead = totalRead + bytesRead;
+                if(totalRead % 1024*10 == 0) {
+                    taskUpdate.TaskProgressPublish((long)((float)totalRead/toRead*100));
+                }
             }
 
             Log.d(FileSenderTask.TAG,"Loop iterations run : " + loop);
@@ -111,6 +120,7 @@ public class FileSenderTask extends AsyncTask {
     @Override
     protected void onPostExecute(Object o) {
         super.onPostExecute(o);
+        taskUpdate.TaskCompleted();
 
         if(SocketHolder.getBluetoothSocket().isConnected()) {
             Log.d(FileSenderTask.TAG,"BluetoothSocket is connected");

@@ -7,6 +7,7 @@ import android.util.Log;
 
 import com.examples.akshay.bluetoothfiletransfer.MetaData;
 import com.examples.akshay.bluetoothfiletransfer.SocketHolder;
+import com.examples.akshay.bluetoothfiletransfer.interfaces.TaskUpdate;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -27,10 +28,11 @@ public class FileReceiverTask extends AsyncTask {
     private static final String TAG = "===FileReceiverTask";
 
     InputStream inputStream;
+    TaskUpdate taskUpdate;
     //String filePath;
-    public FileReceiverTask() {
+    public FileReceiverTask(TaskUpdate taskUpdate) {
         Log.d(FileReceiverTask.TAG,"Object created");
-
+        this.taskUpdate = taskUpdate;
         try {
 
             Log.d(FileReceiverTask.TAG,"trying to get inputStream");
@@ -46,7 +48,7 @@ public class FileReceiverTask extends AsyncTask {
 
     @Override
     protected Object doInBackground(Object[] objects) {
-
+        taskUpdate.TaskStarted();
         if(!SocketHolder.getBluetoothSocket().isConnected()) {
             Log.d(FileReceiverTask.TAG,"Socket is closed... Can't perform file receiving Task...");
             return null;
@@ -72,7 +74,8 @@ public class FileReceiverTask extends AsyncTask {
 
             byte[] buffer = new byte[1024];
             int read;
-            int totalRead = 0;
+            long totalRead = 0;
+            long toRead = metaData.getDataSize();
             int loop = 0;
             if(! SocketHolder.getBluetoothSocket().isConnected()) {
                 Log.d(FileReceiverTask.TAG,"Socket is closed... Can't perform file receiving from stream...");
@@ -83,7 +86,10 @@ public class FileReceiverTask extends AsyncTask {
                 totalRead = totalRead + read;
                 outputStreamWriteToFile.write(buffer,0,read);
                 loop++;
-                Log.d(FileReceiverTask.TAG,"loop iterations : " + loop + " bytes read: " + totalRead);
+                //Log.d(FileReceiverTask.TAG,"loop iterations : " + loop + " bytes read: " + totalRead);
+                if(totalRead % 1024*10 == 0) {
+                    taskUpdate.TaskProgressPublish((long)((float)totalRead/toRead*100));
+                }
 
                 //This the most important part...
                 if(totalRead == metaData.getDataSize()) {
@@ -112,7 +118,7 @@ public class FileReceiverTask extends AsyncTask {
     @Override
     protected void onPostExecute(Object o) {
         super.onPostExecute(o);
-
+        taskUpdate.TaskCompleted();
         if(SocketHolder.getBluetoothSocket().isConnected()) {
             Log.d(FileReceiverTask.TAG,"BluetoothSocket is connected");
 
