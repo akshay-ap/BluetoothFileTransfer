@@ -30,4 +30,5 @@
     <string name="test1">test1</string>
     <string name="test2">test2</string>
     <string name="accept_connections">Accept Connections</string>
+    <string name="receive">RECEIVE</string>
 </resources>

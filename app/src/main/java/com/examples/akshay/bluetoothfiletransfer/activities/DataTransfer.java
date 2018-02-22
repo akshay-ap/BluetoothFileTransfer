@@ -19,15 +19,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.examples.akshay.bluetoothfiletransfer.Constants;
-import com.examples.akshay.bluetoothfiletransfer.Tasks.DataTransferTask;
 import com.examples.akshay.bluetoothfiletransfer.R;
-import com.examples.akshay.bluetoothfiletransfer.SocketHolder;
 import com.examples.akshay.bluetoothfiletransfer.Tasks.FileReceiverTask;
 import com.examples.akshay.bluetoothfiletransfer.Tasks.FileSenderTask;
 import com.obsez.android.lib.filechooser.ChooserDialog;
 
 import java.io.File;
-import java.io.IOException;
 
 import static com.examples.akshay.bluetoothfiletransfer.Constants.DATA_TRANSFER_DATA;
 
@@ -59,13 +56,17 @@ public class DataTransfer extends AppCompatActivity implements View.OnClickListe
 
     private void setupUI() {
         editTextInput = findViewById(R.id.activity_data_transfer_edittext_input);
+        editTextInput.setVisibility(View.GONE);
+
         editTextFileInput = findViewById(R.id.activity_data_transfer_edittext_file_input);
+        editTextFileInput.setVisibility(View.GONE);
 
         textViewDataReceived = findViewById(R.id.activity_data_transfer_text_received);
+        textViewDataReceived.setVisibility(View.GONE);
 
         buttonSend = findViewById(R.id.activity_data_transfer_button_send);
         buttonSend.setOnClickListener(this);
-
+        buttonSend.setVisibility(View.GONE);
 
         buttonTest1 = findViewById(R.id.activity_data_transfer_test_1);
         buttonTest1.setOnClickListener(this);
@@ -119,20 +120,6 @@ public class DataTransfer extends AppCompatActivity implements View.OnClickListe
 //                }
                 break;
             case R.id.activity_data_transfer_test_1:
-                /*Log.d(DataTransfer.TAG,"test click");
-                String filePath = editTextFileInput.getText().toString();
-                Toast.makeText(DataTransfer.this, "FILE: " + filePath, Toast.LENGTH_SHORT).show();
-                FileSenderTask fileSenderTask = new FileSenderTask(filePath);
-                fileSenderTask.execute();*/
-                /*try {
-                    Log.d(DataTransfer.TAG,"Trying to close socket..." + SocketHolder.getBluetoothSocket().isConnected());
-                    SocketHolder.getBluetoothSocket().close();
-                    Log.d(DataTransfer.TAG,"closed socket...");
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    Log.d(DataTransfer.TAG,"Failed to close socket...");
-                    Log.d(DataTransfer.TAG,e.toString());
-                }*/
 
                 if(fileReceiverTask == null || fileReceiverTask.getStatus() == AsyncTask.Status.FINISHED) {
                     fileReceiverTask = new FileReceiverTask();
@@ -158,7 +145,6 @@ public class DataTransfer extends AppCompatActivity implements View.OnClickListe
                                 Toast.makeText(DataTransfer.this,"Already in sending task is running",Toast.LENGTH_SHORT).show();
                                 Log.d(DataTransfer.TAG,"already sending task is running");
                             }
-
                         }
                     })
                     .build()

@@ -10,7 +10,7 @@
         android:id="@+id/activity_data_transfer_text_received"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/data_received" />
+        android:text="@string/data_received"/>
 
     <EditText
         android:id="@+id/activity_data_transfer_edittext_input"
@@ -40,14 +40,14 @@
             android:layout_weight="1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/test1" />
+            android:text="@string/receive" />
 
         <Button
             android:id="@+id/activity_data_transfer_test_2"
             android:layout_width="match_parent"
             android:layout_weight="1"
             android:layout_height="wrap_content"
-            android:text="@string/test2" />
+            android:text="@string/send" />
     </LinearLayout>
 
 
