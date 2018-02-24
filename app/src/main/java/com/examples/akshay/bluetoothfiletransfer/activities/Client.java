@@ -1,6 +1,5 @@
 package com.examples.akshay.bluetoothfiletransfer.activities;
 
-import android.Manifest;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothManager;
@@ -23,7 +22,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.examples.akshay.bluetoothfiletransfer.BluetoothDeviceAdapter;
+import com.examples.akshay.bluetoothfiletransfer.adapters.BluetoothDeviceAdapter;
 import com.examples.akshay.bluetoothfiletransfer.Tasks.ConnectTask;
 import com.examples.akshay.bluetoothfiletransfer.R;
 import com.examples.akshay.bluetoothfiletransfer.Utils;

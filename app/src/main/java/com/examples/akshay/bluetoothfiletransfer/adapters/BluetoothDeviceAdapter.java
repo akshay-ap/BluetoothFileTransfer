@@ -1,4 +1,4 @@
-package com.examples.akshay.bluetoothfiletransfer;
+package com.examples.akshay.bluetoothfiletransfer.adapters;
 
 import android.bluetooth.BluetoothDevice;
 import android.content.Context;
@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.examples.akshay.bluetoothfiletransfer.R;
 import com.examples.akshay.bluetoothfiletransfer.activities.Client;
 
 import java.util.ArrayList;
