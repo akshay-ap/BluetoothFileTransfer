@@ -3,7 +3,7 @@ package com.examples.akshay.bluetoothfiletransfer.activities;
 import android.Manifest;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Intent;
-import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -12,11 +12,14 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
+import com.examples.akshay.bluetoothfiletransfer.InstanceProviderAPI;
 import com.examples.akshay.bluetoothfiletransfer.R;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import static android.content.pm.PackageManager.MATCH_ALL;
 import static android.content.pm.PackageManager.PERMISSION_GRANTED;
@@ -27,18 +30,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private static final String TAG = "===MainActivity";
     Button buttonClient;
     Button buttonServer;
+    Button buttonTest;
     private static boolean  isBluetoothAvailable;
     BluetoothAdapter mBluetoothAdapter;
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-
-        if(!isBluetoothAvailable) {
-            buttonServer.setEnabled(false);
-            buttonClient.setEnabled(false);
-        }
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,9 +55,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        if(!isBluetoothAvailable) {
+            buttonServer.setEnabled(false);
+            buttonClient.setEnabled(false);
+        }
+    }
+
     private void setupUI() {
         buttonClient = findViewById(R.id.main_activity_button_client);
         buttonClient.setOnClickListener(this);
+
+        buttonTest = findViewById(R.id.main_activity_button_test);
+        buttonTest.setOnClickListener(this);
 
         buttonServer = findViewById(R.id.main_activity_button_server);
         buttonServer.setOnClickListener(this);
@@ -76,6 +83,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             break;
         case R.id.main_activity_button_server:
             startActivity(new Intent(this,Client.class));
+            break;
+        case R.id.main_activity_button_test:
+            startActivity(new Intent(this,CollectSend.class));
             break;
         default:
             break;
