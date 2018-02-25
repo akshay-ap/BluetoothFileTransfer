@@ -31,4 +31,6 @@
     <string name="test2">test2</string>
     <string name="accept_connections">Accept Connections</string>
     <string name="receive">RECEIVE</string>
+    <string name="receive_forms">RECEIVE FORMS</string>
+    <string name="send_forms">SEND FORMS</string>
 </resources>

@@ -24,3 +24,6 @@ Server -> Client
 
 <img src="screenShots/moto.gif" width= 30%>    <img src="screenShots/asus.gif" width= 30%>
 
+Completed forms :
+
+<img src="screenShots/forms.png" width= 30%>   

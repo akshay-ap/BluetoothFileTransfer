@@ -1,37 +1,29 @@
 package com.examples.akshay.bluetoothfiletransfer.activities;
 
 import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.AsyncTask;
 import android.os.Environment;
-import android.os.Handler;
-import android.os.Message;
-import android.provider.ContactsContract;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ProgressBar;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.examples.akshay.bluetoothfiletransfer.Constants;
 import com.examples.akshay.bluetoothfiletransfer.R;
-import com.examples.akshay.bluetoothfiletransfer.SocketHolder;
 import com.examples.akshay.bluetoothfiletransfer.Tasks.FileReceiverTask;
 import com.examples.akshay.bluetoothfiletransfer.Tasks.FileSenderTask;
+import com.examples.akshay.bluetoothfiletransfer.Tasks.MultiFileReceiverTask;
+import com.examples.akshay.bluetoothfiletransfer.Tasks.MultiFileSenderTask;
 import com.examples.akshay.bluetoothfiletransfer.interfaces.TaskUpdate;
 import com.obsez.android.lib.filechooser.ChooserDialog;
 
 import java.io.File;
-
-import static com.examples.akshay.bluetoothfiletransfer.Constants.DATA_TRANSFER_DATA;
 
 public class DataTransfer extends AppCompatActivity implements View.OnClickListener,TaskUpdate {
     private final static String TAG = "===DataTransfer";
@@ -40,7 +32,11 @@ public class DataTransfer extends AppCompatActivity implements View.OnClickListe
     BroadcastReceiver broadcastReceiver;
     Button buttonTest1;
     Button buttonTest2;
+    Button buttonFromSend;
+    Button buttonFromReceive;
+
     FileReceiverTask fileReceiverTask;
+    MultiFileReceiverTask multiFileReceiverTask;
     IntentFilter intentFilter;
     FileSenderTask fileSenderTask;
     String toDisplay;
@@ -66,6 +62,12 @@ public class DataTransfer extends AppCompatActivity implements View.OnClickListe
 
         buttonTest2 = findViewById(R.id.activity_data_transfer_test_2);
         buttonTest2.setOnClickListener(this);
+
+        buttonFromSend = findViewById(R.id.activity_data_transfer_from_send);
+        buttonFromSend.setOnClickListener(this);
+
+        buttonFromReceive = findViewById(R.id.activity_data_transfer_form_receive);
+        buttonFromReceive.setOnClickListener(this);
     }
 
     @Override
@@ -120,6 +122,20 @@ public class DataTransfer extends AppCompatActivity implements View.OnClickListe
                     .show();
                 break;
 
+            case  R.id.activity_data_transfer_from_send:
+                startActivity(new Intent(this,CollectSend.class));
+                break;
+            case  R.id.activity_data_transfer_form_receive:
+
+                toDisplay = "Received : ";
+                state = false;
+                if(multiFileReceiverTask == null || multiFileReceiverTask.getStatus() == AsyncTask.Status.FINISHED) {
+                    multiFileReceiverTask = new MultiFileReceiverTask(DataTransfer.this);
+                    multiFileReceiverTask.execute();
+                } else {
+                    Toast.makeText(DataTransfer.this,"Already running another task",Toast.LENGTH_SHORT).show();
+                }
+                break;
             default:
                 break;
         }
@@ -142,13 +158,6 @@ public class DataTransfer extends AppCompatActivity implements View.OnClickListe
                 Log.d(DataTransfer.TAG,"TaskCompleted()");
                 if(alertDialog.isShowing()) {
                     alertDialog.dismiss();
-                }
-                String toShow;
-                if (state) {
-                    toShow = "File sent : "+ message;
-                }
-                else {
-                    toShow = "File received : "+ message;
                 }
                 Toast.makeText(DataTransfer.this,message,Toast.LENGTH_SHORT).show();
             }
@@ -181,7 +190,7 @@ public class DataTransfer extends AppCompatActivity implements View.OnClickListe
     }
 
     @Override
-    public void TaskProgressPublish(final long update) {
+    public void TaskProgressPublish(final String update) {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -189,7 +198,20 @@ public class DataTransfer extends AppCompatActivity implements View.OnClickListe
                 if(!alertDialog.isShowing()) {
                     alertDialog.show();
                 }
-                alertDialog.setMessage(toDisplay + String.valueOf(update)+ "%");
+                alertDialog.setMessage(update);
+            }
+        });
+    }
+
+    @Override
+    public void TaskError(final String e) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if(alertDialog.isShowing()) {
+                    alertDialog.dismiss();
+                }
+                Toast.makeText(DataTransfer.this,e,Toast.LENGTH_SHORT).show();
             }
         });
     }

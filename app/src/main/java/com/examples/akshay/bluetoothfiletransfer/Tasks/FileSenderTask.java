@@ -98,8 +98,8 @@ public class FileSenderTask extends AsyncTask {
                 loop++;
                 outputStream.write(buffer, 0, bytesRead);
                 totalRead = totalRead + bytesRead;
-                if(totalRead % 1024*10 == 0) {
-                    taskUpdate.TaskProgressPublish((long)((float)totalRead/toRead*100));
+                if(totalRead % 1024 == 0) {
+                    taskUpdate.TaskProgressPublish(metaData.getFname() + String.valueOf((float)totalRead/toRead*100) + "%");
                 }
             }
 
@@ -110,7 +110,9 @@ public class FileSenderTask extends AsyncTask {
         } catch (IOException e) {
             e.printStackTrace();
             Log.d(FileSenderTask.TAG,e.toString());
-
+            taskUpdate.TaskError(e.toString());
+        } catch (Exception e) {
+            taskUpdate.TaskError(e.toString());
         }
 
         return null;

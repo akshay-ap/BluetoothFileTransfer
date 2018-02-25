@@ -88,8 +88,8 @@ public class FileReceiverTask extends AsyncTask {
                 outputStreamWriteToFile.write(buffer,0,read);
                 loop++;
                 //Log.d(FileReceiverTask.TAG,"loop iterations : " + loop + " bytes read: " + totalRead);
-                if(totalRead % 1024*10 == 0) {
-                    taskUpdate.TaskProgressPublish((long)((float)totalRead/toRead*100));
+                if(totalRead % 1024 == 0) {
+                    taskUpdate.TaskProgressPublish(metaData.getFname() + String.valueOf((float)totalRead/toRead*100) + "%");
                 }
 
                 //This the most important part...
@@ -107,10 +107,12 @@ public class FileReceiverTask extends AsyncTask {
         } catch (IOException e) {
             e.printStackTrace();
             Log.d(FileReceiverTask.TAG,e.toString() );
+            taskUpdate.TaskError(e.toString());
 
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
             Log.d(FileReceiverTask.TAG,e.toString() );
+            taskUpdate.TaskError(e.toString());
         }
 
         return null;

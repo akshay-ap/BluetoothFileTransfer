@@ -9,7 +9,7 @@ import java.io.Serializable;
 public class MetaData implements Serializable {
 
     private long dataSize;
-
+    private String fname;
     public MetaData(long dataSize, String fname) {
         this.dataSize = dataSize;
         this.fname = fname;
@@ -23,7 +23,6 @@ public class MetaData implements Serializable {
         this.fname = fname;
     }
 
-    private String fname;
     public MetaData() {
 
     }
