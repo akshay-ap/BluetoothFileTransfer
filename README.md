@@ -17,12 +17,15 @@ For `CLIENT` :
 2. Choose the device you want to connet to. (Click on name of device).
 3. Click `CONNECT`.
 
-If connection is successful, a screen with `RECEIVE` and `SEND` button will appear. 
+If connection is successful, a screen for sending or recevind data will appear. 
 
 
+(FOR ODK COLLECT)
 Server -> Client
 
 <img src="screenShots/moto.gif" width= 30%>    <img src="screenShots/asus.gif" width= 30%>
+
+
 
 Completed forms :
 
